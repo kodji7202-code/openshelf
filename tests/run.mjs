@@ -184,7 +184,7 @@ await test("a submission without the confirmations is refused", () => {
     "### Language",
     "en",
   ].join("\n");
-  assert.throws(() => draftFromIssue({ body, issueNumber: 1, author: "kodji7202-code" }), /confirmation/u);
+  assert.throws(() => draftFromIssue({ body, issueNumber: 1, author: "kodji7202-code" }), /confirmări/u);
 });
 
 await test("a lookalike host is refused before a file is written", () => {
@@ -205,7 +205,7 @@ await test("a lookalike host is refused before a file is written", () => {
     "- [X] secrets",
     "- [X] terms",
   ].join("\n");
-  assert.throws(() => draftFromIssue({ body, issueNumber: 1, author: "kodji7202-code" }), /official link/u);
+  assert.throws(() => draftFromIssue({ body, issueNumber: 1, author: "kodji7202-code" }), /linkul oficial/u);
 });
 
 await test("a heading is read once and unknown headings are ordinary text", () => {

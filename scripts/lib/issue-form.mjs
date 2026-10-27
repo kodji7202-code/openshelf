@@ -111,22 +111,22 @@ export function draftFromIssue({ body, issueNumber, author, now = new Date() }) 
   const confirmations = checkedConfirmations(body).join(" \n ").toLowerCase();
   for (const required of ["author", "secrets", "terms"]) {
     if (!confirmations.includes(required))
-      fail("a required confirmation is not ticked (author, no secrets, or terms)");
+      fail("nu ai bifat toate confirmările obligatorii (autor, fără secrete, termeni)");
   }
 
   const officialLink = oneLine(get("link"));
   if (!OFFICIAL_LINK.test(officialLink))
-    fail("the official link is not a published template: it must look like https://openbot.run/agents/<22 characters>");
+    fail("linkul oficial nu e un șablon publicat: trebuie să arate ca https://openbot.run/agents/<22 de caractere>");
   const id = templateId(officialLink);
 
   const name = oneLine(get("name"));
   const slug = slugify(name);
-  if (!SLUG.test(slug)) fail("the name cannot become a slug of 3 to 60 characters; use letters and digits");
+  if (!SLUG.test(slug)) fail("din nume nu iese un slug de 3 pînă la 60 de caractere; folosește litere și cifre");
 
   const tagline = oneLine(get("tagline"));
   const description = get("description").trim();
-  if (!tagline) fail("the tagline is empty");
-  if (!description) fail("the description is empty");
+  if (!tagline) fail("tagline-ul e gol");
+  if (!description) fail("descrierea e goală");
 
   const agentDescription = get("agentDescription").trim() || description;
   const categoryRaw = oneLine(get("category")).toLowerCase();
@@ -136,14 +136,14 @@ export function draftFromIssue({ body, issueNumber, author, now = new Date() }) 
   const tags = [...new Set(list(get("tags")).map(slugify).filter(Boolean))];
   if (tags.length === 0) fail("at least one tag is required");
   // Refuse, do not trim: a contributor who wrote seven tags must decide which one to drop.
-  if (tags.length > 6) fail(`are ${tags.length} tag-uri, iar limita este 6`);
+  if (tags.length > 6) fail(`ai ${tags.length} tag-uri, iar limita este 6`);
 
   const languageRaw = oneLine(get("language")).toLowerCase();
   const language = /^[a-z]{2}(?:-[a-z]{2})?$/u.test(languageRaw) ? languageRaw : "en";
   if (languageRaw && language !== languageRaw) warnings.push(`language "${languageRaw}" saved as "en"`);
 
   const skills = [...new Set(list(get("skills")).map(slugify).filter(Boolean))];
-  if (skills.length > 32) fail("more than 32 skills");
+  if (skills.length > 32) fail("ai mai mult de 32 de skilluri");
 
   const tools = [];
   for (const item of list(get("requirements"))) {
@@ -154,7 +154,7 @@ export function draftFromIssue({ body, issueNumber, author, now = new Date() }) 
 
   const github = oneLine(author);
   if (!/^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$/u.test(github))
-    fail("the GitHub handle of the submitter is not usable");
+    fail("numele de utilizator GitHub al trimitătorului nu e utilizabil");
 
   const template = {
     schemaVersion: 1,
@@ -179,7 +179,7 @@ export function draftFromIssue({ body, issueNumber, author, now = new Date() }) 
     status: "published",
   };
 
-  if (!/^[\x20-\x7E\p{L}\p{N}]+$/u.test(officialLink) || id === null) fail("the official link is not usable");
+  if (!/^[\x20-\x7E\p{L}\p{N}]+$/u.test(officialLink) || id === null) fail("linkul oficial nu e utilizabil");
 
   return { template, slug, warnings };
 }
