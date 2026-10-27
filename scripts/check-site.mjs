@@ -63,5 +63,16 @@ assert.match(esDetail, new RegExp(`href="${base}/downloads/dev\\.zip"`, "u"));
 const enDetail = await read("t/ghost/index.html");
 assert.match(enDetail, /Anti-jobs/u);
 assert.match(enDetail, new RegExp(`href="${base}/downloads/ghost\\.zip"`, "u"));
+assert.match(enDetail, /class="detail-copy"/u, "the name and tagline share the left column");
+assert.doesNotMatch(enDetail, /detail-aside/u, "the old bottom-aligned aside is gone");
+assert.ok(
+  enDetail.indexOf('class="detail-stage"') < enDetail.indexOf('class="detail-report"'),
+  "the report note lives inside the blue stage",
+);
+assert.match(esDetail, /class="detail-copy"/u);
 
-console.log("site check: 16 page assertions passed.");
+const css = await read("_astro/" + (await read("index.html")).match(/href="\/openshelf\/_astro\/([^"]+\.css)"/u)[1]);
+assert.match(css, /\.detail-hero\{[^}]*align-items:start/u, "the hero is top-aligned");
+assert.match(css, /\.detail-stage\{[^}]*padding:56px/u, "the stage starts at 56px");
+
+console.log("site check: 22 page assertions passed.");

@@ -31,37 +31,29 @@ const title = `${template.name} — OpenShelf`;
 
 <Base locale={locale} title={title} description={tagline} noindex={delisted}>
   <section class="detail-hero">
-    <div>
-      <a class="back" href={catalogHref}>← {t("detail.back")}</a>
+    <a class="back" href={catalogHref}>← {t("detail.back")}</a>
+    <div class="detail-copy">
       <h1>{template.name}</h1>
+      <p class="detail-tagline">{tagline}</p>
+      {delisted && <p class="note">{t("detail.delisted")}</p>}
     </div>
-    <div class="detail-aside">
-      <p>{tagline}</p>
-      <p class="row-fact">
+    <div class="detail-actions">
+      <p class="meta-line">
         {categoryName(template.category, locale)} · {languageName(template.language, locale)} ·{" "}
         {t("card.by", { name: template.creator.name })}
       </p>
       {template.officialLink ? (
-        <p>
-          <a class="btn" href={template.officialLink} rel="noopener noreferrer" target="_blank">
-            {t("card.install")}<span class="sr"> {t("a11y.newTab")}</span>
-          </a>
-        </p>
+        <a class="btn" href={template.officialLink} rel="noopener noreferrer" target="_blank">
+          {t("card.install")}<span class="sr"> {t("a11y.newTab")}</span>
+        </a>
       ) : (
-        <p><a class="btn" href={zip} download>{t("card.download")}</a></p>
+        <a class="btn" href={zip} download>{t("card.download")}</a>
       )}
       {template.officialLink && (
         <p class="note">
           <a href={zip} download>{t("detail.installZip")}</a> · {t("detail.zipNote")}
         </p>
       )}
-      {delisted && <p class="note">{t("detail.delisted")}</p>}
-      <p class="note">
-        {t("detail.reportBody")}{" "}
-        <a href={repoUrl(`/issues/new?title=${encodeURIComponent(`Report: ${template.name}`)}`)} rel="noopener">
-          {t("detail.reportAction")}
-        </a>.
-      </p>
     </div>
   </section>
 
@@ -82,6 +74,12 @@ const title = `${template.name} — OpenShelf`;
         })
       }
     </div>
+    <p class="detail-report">
+      {t("detail.reportBody")}{" "}
+      <a href={repoUrl(`/issues/new?title=${encodeURIComponent(`Report: ${template.name}`)}`)} rel="noopener">
+        {t("detail.reportAction")}
+      </a>.
+    </p>
   </section>
 
   <section class="detail-meta">
