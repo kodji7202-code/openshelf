@@ -3,5 +3,6 @@ site/node_modules/
 site/dist/
 site/.astro/
 site/src/data/templates.json
+site/public/downloads/
 tests/.tmp/
 *.log

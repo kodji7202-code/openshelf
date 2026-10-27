@@ -481,6 +481,20 @@ dl.facts dd {
   border-radius: 8px;
 }
 
+.steps {
+  margin: 0.75rem 0 0;
+  padding-left: 1.15rem;
+  font-size: 0.93rem;
+}
+
+.steps li + li {
+  margin-top: 0.3rem;
+}
+
+.card .footer > a:last-child {
+  margin-left: auto;
+}
+
 .banner {
   margin-top: 1rem;
   padding: 0.8rem 1rem;

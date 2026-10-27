@@ -15,7 +15,6 @@
     "tags",
     "language",
     "agent",
-    "officialLink",
     "creator",
     "submittedAt",
     "updatedAt",
@@ -72,7 +71,7 @@
     "officialLink": {
       "type": "string",
       "pattern": "^https://openbot\\.run/agents/[A-Za-z0-9_-]{22}$",
-      "description": "The published OpenBot agent template. OpenShelf derives the openbot:// link from it and never hosts the agent itself."
+      "description": "The published OpenBot agent template, when the author has one. OpenShelf derives the openbot:// link from it and never hosts the agent itself. A template without it is installed from the download archive."
     },
     "creator": {
       "type": "object",

@@ -39,6 +39,7 @@ const haystack = [
   <p>{template.tagline}</p>
   <div class="footer">
     <span class="by" title={`Creat de ${template.creator.name}`}>de {template.creator.name}</span>
-    <a class="by" href={href(`t/${template.slug}/`)}>Detalii →</a>
+    <a class="by" href={href(`downloads/${template.slug}.zip`)} download>Download .zip</a>
+    <a class="by" href={link}>Detalii →</a>
   </div>
 </li>

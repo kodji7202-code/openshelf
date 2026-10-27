@@ -16,9 +16,9 @@ const description =
   <section class="hero">
     <h1>Șabloane de agenți, alese de oameni care le-au folosit</h1>
     <p>
-      Un director comunitar pentru agenții publicați pe OpenBot. Fiecare card duce la șablonul oficial al autorului:
-      OpenShelf nu găzduiește agenți și nu instalează nimic în locul tău — deschide previzualizarea din OpenBot, iar
-      instalarea rămâne un click acolo.
+      Un director comunitar de șabloane pentru OpenBot. Fiecare card se instalează dintr-o arhivă:
+      descarci .zip-ul, îl imporți în OpenBot din Settings → Import, iar agentul apare în lista ta.
+      OpenShelf nu instalează nimic în locul tău.
     </p>
     <p class="count" data-count>
       {total === 0 ? "Niciun șablon publicat încă." : `${total} ${total === 1 ? "șablon publicat" : "șabloane publicate"}.`}
@@ -86,8 +86,9 @@ const description =
   </div>
 
   <p class="note">
-    Un card nu este o recomandare. Deschide linkul oficial, citește instrucțiunile agentului și decide dacă îl instalezi:
-    șabloanele sunt scrise de autori independenți, iar OpenShelf nu le verifică execuția.
+    Un card nu este o recomandare. Descarci arhiva, citești instrucțiunile agentului și decizi dacă îl instalezi:
+    șabloanele sînt scrise de autori independenți, iar OpenShelf nu le verifică execuția. Cînd autorul are și un
+    șablon oficial publicat, linkul lui rămîne pe pagina de detaliu.
   </p>
 </Base>
 

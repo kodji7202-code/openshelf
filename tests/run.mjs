@@ -3,13 +3,15 @@
 //
 //   npm test
 
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import assert from "node:assert/strict";
 import { draftFromIssue, parseIssueForm, renderTemplateFile } from "../scripts/lib/issue-form.mjs";
+import { manifestFor, manifestProblems, readmeFor } from "../scripts/lib/import-manifest.mjs";
+import { readStoredZip, writeStoredZip } from "../scripts/lib/zip.mjs";
 import { slugify } from "../scripts/lib/rules.mjs";
-import { validateTemplates } from "../scripts/lib/validate.mjs";
+import { templateFiles, validateTemplates } from "../scripts/lib/validate.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const tmp = join(root, "tests", ".tmp");
@@ -287,6 +289,48 @@ await test("a delisted template is not gated on its link, a published one is", a
   );
   const published = await validateTemplates(liveDir, { checkLinks: true, fetchImpl: gone });
   assert.equal(published.failed, 1, "a published template with a dead link must be refused");
+});
+
+await test("every template ships a readable install archive", async () => {
+  const files = await templateFiles(join(root, "templates"));
+  assert.ok(files.length > 0, "expected the catalog to have templates");
+  for (const file of files) {
+    const template = JSON.parse(await readFile(file, "utf8"));
+    const archive = writeStoredZip([
+      { name: "openbot-import.json", data: `${JSON.stringify(manifestFor(template), null, 2)}\n` },
+      { name: `agents/${template.slug}/README.txt`, data: readmeFor(template) },
+    ]);
+    const entries = readStoredZip(archive);
+    assert.ok(entries.has("openbot-import.json"), `${template.slug}: no manifest in the archive`);
+    const manifest = JSON.parse(entries.get("openbot-import.json").toString("utf8"));
+    assert.deepEqual(manifestProblems(manifest), [], `${template.slug}: import manifest refuses to load`);
+    assert.equal(manifest.agents[0].name, template.name);
+    assert.equal(manifest.agents[0].description, template.agent.description);
+    assert.equal(manifest.agents[0].key, template.slug);
+  }
+});
+
+await test("an archive in another format is refused before import", () => {
+  const template = {
+    slug: "demo",
+    name: "Demo",
+    agent: { title: "Demo", description: "x" },
+    officialLink: null,
+  };
+  const wrongFormat = { ...manifestFor(template), format: "openbot-agent-export" };
+  assert.ok(manifestProblems(wrongFormat).length > 0, "a foreign format must be refused");
+  const wrongVersion = { ...manifestFor(template), version: 2 };
+  assert.ok(manifestProblems(wrongVersion).length > 0, "an unknown version must be refused");
+  const escaped = manifestFor(template);
+  escaped.agents[0].skills = ["agents/../secret/SKILL.md"];
+  assert.ok(manifestProblems(escaped).length > 0, "a path outside the agent folder must be refused");
+});
+
+await test("a corrupted archive fails its checksum instead of loading", () => {
+  const archive = writeStoredZip([{ name: "openbot-import.json", data: "{\"format\":\"x\"}\n" }]);
+  const start = archive.indexOf("openbot-import.json") + "openbot-import.json".length;
+  archive[start + 2] ^= 0xff;
+  assert.throws(() => readStoredZip(archive), /CRC mismatch/u);
 });
 
 await rm(tmp, { recursive: true, force: true });

@@ -25,7 +25,7 @@ const templateSchema = z
       skills: z.array(z.string()).max(32),
       routines: z.boolean(),
     }),
-    officialLink: z.string().regex(/^https:\/\/openbot\.run\/agents\/[A-Za-z0-9_-]{22}$/u),
+    officialLink: z.string().regex(/^https:\/\/openbot\.run\/agents\/[A-Za-z0-9_-]{22}$/u).optional(),
     creator: z.object({ name: text.max(60), github: text.max(39) }),
     requires: z
       .object({
@@ -36,8 +36,8 @@ const templateSchema = z
     submittedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
     updatedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
     status: z.enum(["published", "delisted"]),
-    id: z.string().length(22),
-    deepLink: z.string().regex(/^openbot:\/\/agents\/[A-Za-z0-9_-]{22}$/u),
+    id: z.string().length(22).nullable(),
+    deepLink: z.string().regex(/^openbot:\/\/agents\/[A-Za-z0-9_-]{22}$/u).nullable(),
   })
   .strict();
 
