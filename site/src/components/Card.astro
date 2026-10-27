@@ -1,0 +1,46 @@
+---
+import { categoryName, languageName, type Template } from "../lib/templates";
+
+interface Props {
+  template: Template;
+  index: number;
+}
+
+const { template } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const href = `${base}t/${template.slug}/`;
+const haystack = [
+  template.name,
+  template.tagline,
+  template.description,
+  template.category,
+  categoryName(template.category),
+  template.language,
+  languageName(template.language),
+  template.creator.name,
+  template.creator.github,
+  ...template.tags,
+  ...template.agent.skills,
+].join(" ").toLowerCase();
+---
+
+<li
+  class="card"
+  data-category={template.category}
+  data-language={template.language}
+  data-haystack={haystack}
+  data-name={template.name.toLowerCase()}
+>
+  <div class="meta">
+    <span class="tag">{categoryName(template.category)}</span>
+    <span class="pill">{languageName(template.language)}</span>
+  </div>
+  <h2><a href={href}>{template.name}</a></h2>
+  <p>{template.tagline}</p>
+  <div class="footer">
+    <span class="by" title={`Creat de ${template.creator.name}`}>de {template.creator.name}</span>
+    <span class="votes" title={template.votes === null ? "Voturile nu au putut fi citite la build" : `${template.votes} voturi`}>
+      👍 {template.votes === null ? "—" : template.votes}
+    </span>
+  </div>
+</li>

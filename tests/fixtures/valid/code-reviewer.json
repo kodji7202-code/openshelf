@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "slug": "code-reviewer",
+  "name": "Code Reviewer",
+  "tagline": "Reviews a diff for real bugs, with file, line and a failing scenario.",
+  "description": "Reads a pull request or a local diff and reports only defects: logic errors, edge cases, races, injection, resource leaks. Every finding names the file, the line, the input that breaks it and the smallest fix. Style opinions stay out unless the repository already enforces them.",
+  "category": "dev",
+  "tags": ["code-review", "pull-requests", "testing"],
+  "language": "en",
+  "agent": {
+    "title": "Code Reviewer",
+    "description": "You review diffs, not intentions. Report a finding only when you can name the input that makes it fail. Say what you did not read. Never approve a diff you did not open.",
+    "skills": ["diff-review", "test-gap"],
+    "routines": true
+  },
+  "officialLink": "https://openbot.run/agents/BBBBBBBBBBBBBBBBBBBBBB",
+  "creator": { "name": "OpenShelf fixtures", "github": "kodji7202-code" },
+  "requires": { "tools": ["github", "shell"] },
+  "submittedAt": "2026-10-27",
+  "updatedAt": "2026-10-27",
+  "status": "published"
+}

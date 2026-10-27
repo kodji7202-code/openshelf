@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "slug": "another-slug",
+  "name": "Slug does not match the file name",
+  "tagline": "The file is wrong-filename.json but the slug says another-slug.",
+  "description": "This fixture must be rejected: one template per file, and the slug must equal the file name so a link can never point at the wrong entry.",
+  "category": "other",
+  "tags": ["fixture"],
+  "language": "en",
+  "agent": { "title": "Mismatch", "description": "Rejected fixture.", "skills": [], "routines": false },
+  "officialLink": "https://openbot.run/agents/FFFFFFFFFFFFFFFFFFFFFF",
+  "creator": { "name": "OpenShelf fixtures", "github": "kodji7202-code" },
+  "submittedAt": "2026-10-27",
+  "updatedAt": "2026-10-27",
+  "status": "published"
+}

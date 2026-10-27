@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openshelf.dev/schema/template.schema.json",
+  "title": "OpenShelf template",
+  "description": "One entry of the OpenShelf directory: a public OpenBot agent template, described so a person can decide whether to install it. The official link is the only install source; OpenShelf stores no agent export.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "slug",
+    "name",
+    "tagline",
+    "description",
+    "category",
+    "tags",
+    "language",
+    "agent",
+    "officialLink",
+    "creator",
+    "submittedAt",
+    "updatedAt",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9])){2,59}$",
+      "description": "Lowercase kebab-case, 3-60 characters. Must equal the file name without .json."
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 60, "pattern": "^[^<>]*$" },
+    "tagline": { "type": "string", "minLength": 1, "maxLength": 140, "pattern": "^[^<>]*$" },
+    "description": { "type": "string", "minLength": 1, "maxLength": 2000, "pattern": "^[^<>]*$" },
+    "category": {
+      "type": "string",
+      "enum": ["research", "dev", "media", "business", "ops", "personal", "other"]
+    },
+    "tags": {
+      "type": "array",
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 24, "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$" }
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^(?:[a-z]{2})(?:-[A-Za-z]{2})?$",
+      "description": "The language the agent's instructions are written in, as ISO 639-1, optionally with a region."
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "description", "skills", "routines"],
+      "description": "What the installed OpenBot agent will contain, mirrored from the official template page.",
+      "properties": {
+        "title": { "type": "string", "minLength": 0, "maxLength": 120, "pattern": "^[^<>]*$" },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "^[^<>]*$",
+          "description": "The agent's instructions, as its author wrote them. Shown as plain text."
+        },
+        "skills": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$" }
+        },
+        "routines": { "type": "boolean", "description": "Whether the template carries scheduled routines." }
+      }
+    },
+    "officialLink": {
+      "type": "string",
+      "pattern": "^https://openbot\\.run/agents/[A-Za-z0-9_-]{22}$",
+      "description": "The published OpenBot agent template. OpenShelf derives the openbot:// link from it and never hosts the agent itself."
+    },
+    "creator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "github"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 60, "pattern": "^[^<>]*$" },
+        "github": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 39,
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$"
+        }
+      }
+    },
+    "requires": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tools"],
+      "properties": {
+        "tools": {
+          "type": "array",
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["browser", "computer-use", "github", "web-search", "files", "shell"]
+          }
+        },
+        "notes": { "type": "string", "minLength": 0, "maxLength": 500, "pattern": "^[^<>]*$" }
+      }
+    },
+    "submittedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "updatedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "status": {
+      "type": "string",
+      "enum": ["published", "delisted"],
+      "description": "Only a moderator changes this. A delisted template stays in the repository and shows as delisted."
+    },
+    "sourceIssue": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Set by the issue-to-PR workflow: the submission issue whose reactions are the votes. Not accepted from a contributor.",
+      "readOnly": true
+    }
+  }
+}

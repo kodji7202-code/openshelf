@@ -1,0 +1,46 @@
+name: validate
+
+on:
+  pull_request:
+    paths:
+      - "templates/**"
+      - "schema/**"
+      - "scripts/**"
+      - "tests/**"
+      - "site/**"
+      - "package.json"
+      - ".github/workflows/validate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      ASTRO_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Tests
+        run: npm test
+
+      - name: Schema, rules, duplicates and secrets
+        run: node scripts/validate.mjs
+
+      - name: Official links answer 200
+        run: node scripts/validate.mjs --links
+
+      - name: The site builds with this data
+        run: |
+          npm --prefix site ci --no-audit --no-fund
+          npm run build

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# No sitemap: the catalogue has one index page and one page per template.

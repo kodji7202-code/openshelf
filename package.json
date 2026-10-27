@@ -1,0 +1,21 @@
+{
+  "name": "openshelf",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Community directory of OpenBot agent templates",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "validate": "node scripts/validate.mjs --links",
+    "validate:offline": "node scripts/validate.mjs",
+    "test": "node tests/run.mjs",
+    "index": "node scripts/build-index.mjs",
+    "site:install": "npm --prefix site ci",
+    "site:build": "npm --prefix site run build",
+    "build": "npm run index && npm run site:build"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1"
+  }
+}

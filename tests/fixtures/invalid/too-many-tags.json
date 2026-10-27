@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "slug": "too-many-tags",
+  "name": "Too many tags",
+  "tagline": "Seven tags where the limit is six.",
+  "description": "This fixture must be rejected: the tag limit keeps a card readable.",
+  "category": "other",
+  "tags": ["one", "two", "three", "four", "five", "six", "seven"],
+  "language": "en",
+  "agent": { "title": "Tags", "description": "Rejected fixture.", "skills": [], "routines": false },
+  "officialLink": "https://openbot.run/agents/GGGGGGGGGGGGGGGGGGGGGG",
+  "creator": { "name": "OpenShelf fixtures", "github": "kodji7202-code" },
+  "submittedAt": "2026-10-27",
+  "updatedAt": "2026-10-27",
+  "status": "published"
+}

@@ -1,0 +1,148 @@
+name: Trimite un șablon
+description: Propune un agent pe care l-ai publicat deja în OpenBot, ca să intre în catalog.
+title: "[template] "
+labels: ["submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Înainte de formular, publică agentul în OpenBot (**Publish**, în antetul conversației) și copiază linkul
+        `https://openbot.run/agents/<id>`.
+
+        Un workflow transformă trimiterea într-un pull request. Nimic din ce scrii aici nu este executat; textul
+        ajunge într-un fișier JSON. Un moderator îl citește înainte de publicare.
+
+        Nu trimite secrete, chei, token-uri, date personale sau material pe care nu ai dreptul să îl publici.
+
+  - type: input
+    id: official-link
+    attributes:
+      label: Official template link
+      description: Linkul public al șablonului, exact în forma https://openbot.run/agents/<22 caractere>
+      placeholder: https://openbot.run/agents/AbCdEfGhIjKlMnOpQrStUv
+    validations:
+      required: true
+
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: Numele agentului, așa cum apare pe card. Maxim 60 de caractere.
+      placeholder: Analist de date
+    validations:
+      required: true
+
+  - type: input
+    id: tagline
+    attributes:
+      label: Tagline
+      description: O propoziție despre ce face agentul. Maxim 140 de caractere.
+      placeholder: Ia un CSV și întoarce concluzii cu cifre verificabile.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: |
+        Ce face agentul, pentru cine și ce nu face. Text simplu, fără HTML. Maxim 2000 de caractere.
+        Nu lipi aici instrucțiunile agentului — au câmpul lor mai jos.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - research
+        - dev
+        - media
+        - business
+        - ops
+        - personal
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: Tags
+      description: Maxim 6, separate prin virgulă. Litere mici, cifre și cratime.
+      placeholder: csv, rapoarte, statistica
+    validations:
+      required: true
+
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      description: Limba în care sunt scrise instrucțiunile agentului, ca ISO 639-1 (ro, en, de…).
+      placeholder: ro
+    validations:
+      required: true
+
+  - type: input
+    id: agent-title
+    attributes:
+      label: Agent title
+      description: Titlul agentului din OpenBot, dacă diferă de nume. Opțional.
+      placeholder: Analist de date
+
+  - type: textarea
+    id: agent-instructions
+    attributes:
+      label: Agent instructions
+      description: |
+        Textul instrucțiunilor, copiat din OpenBot. Va fi afișat ca text, ca oricine să vadă ce primește
+        înainte de instalare. Maxim 2000 de caractere.
+    validations:
+      required: true
+
+  - type: input
+    id: skills
+    attributes:
+      label: Skills
+      description: Slug-urile skill-urilor incluse, separate prin virgulă. Lasă gol dacă nu are.
+      placeholder: csv-cleanup, chart-brief
+
+  - type: dropdown
+    id: routines
+    attributes:
+      label: Routines
+      description: Șablonul include rutine programate?
+      options:
+        - "no"
+        - "yes"
+    validations:
+      required: true
+
+  - type: input
+    id: requirements
+    attributes:
+      label: Requirements
+      description: |
+        De ce are nevoie agentul, separate prin virgulă. Valori acceptate: browser, computer-use, github,
+        web-search, files, shell.
+      placeholder: web-search, browser
+
+  - type: input
+    id: creator-name
+    attributes:
+      label: Creator name
+      description: Numele sub care vrei să apari. Lasă gol ca să folosim handle-ul GitHub.
+      placeholder: Echipa ta
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I am the author of this template or have written permission from the author (author)
+          required: true
+        - label: It contains no secrets, credentials or personal data, and no third-party material without a licence (secrets)
+          required: true
+        - label: I accept the terms and the CC BY 4.0 licence of the templates (terms)
+          required: true

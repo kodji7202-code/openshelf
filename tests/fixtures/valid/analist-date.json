@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "slug": "analist-date",
+  "name": "Analist de date",
+  "tagline": "Ia un CSV sau un tabel și intoarce concluzii cu cifre verificabile.",
+  "description": "Primește un fișier sau un tabel, îl curăță, calculează indicatorii care contează și scrie un rezumat scurt cu cifrele și sursa fiecăreia. Nu inventează valori lipsă și spune explicit ce nu a putut verifica.",
+  "category": "research",
+  "tags": ["csv", "rapoarte", "statistica"],
+  "language": "ro",
+  "agent": {
+    "title": "Analist de date",
+    "description": "Ești analist de date. Pentru fiecare rezultat dai cifra, sursa și metoda. Când o coloană e incompletă, spui câte rânduri lipsesc înainte de a trage concluzii. Nu rotunjești fără să spui că ai rotunjit.",
+    "skills": ["csv-cleanup", "chart-brief"],
+    "routines": false
+  },
+  "officialLink": "https://openbot.run/agents/AAAAAAAAAAAAAAAAAAAAAA",
+  "creator": { "name": "OpenShelf fixtures", "github": "kodji7202-code" },
+  "requires": { "tools": ["files"], "notes": "Are nevoie de un CSV sau de un tabel lipit în chat." },
+  "submittedAt": "2026-10-27",
+  "updatedAt": "2026-10-27",
+  "status": "published"
+}

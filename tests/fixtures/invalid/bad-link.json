@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "slug": "bad-link",
+  "name": "Bad link",
+  "tagline": "The official link points at a lookalike domain.",
+  "description": "This fixture must be rejected: the link host is not openbot.run, so the install button would send people to an impostor.",
+  "category": "other",
+  "tags": ["fixture"],
+  "language": "en",
+  "agent": { "title": "Bad link", "description": "Rejected fixture.", "skills": [], "routines": false },
+  "officialLink": "https://openbot.run.evil.com/agents/DDDDDDDDDDDDDDDDDDDDDD",
+  "creator": { "name": "OpenShelf fixtures", "github": "kodji7202-code" },
+  "submittedAt": "2026-10-27",
+  "updatedAt": "2026-10-27",
+  "status": "published"
+}
