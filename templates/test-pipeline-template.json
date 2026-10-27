@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "slug": "test-pipeline-template",
+  "name": "Test pipeline template",
+  "tagline": "A submission used once to prove the automation works end to end.",
+  "description": "This issue is a test of the submission workflow. It should become a pull request with one JSON file, and the pull request should be blocked by the link check because the id does not exist. It is closed immediately afterwards.",
+  "category": "other",
+  "tags": [
+    "test",
+    "pipeline"
+  ],
+  "language": "en",
+  "agent": {
+    "title": "Test pipeline template",
+    "description": "You exist to prove that the issue form reaches the catalogue. Do nothing else.",
+    "skills": [
+      "test-skill"
+    ],
+    "routines": false
+  },
+  "officialLink": "https://openbot.run/agents/ZZZZZZZZZZZZZZZZZZZZZZ",
+  "creator": {
+    "name": "Pipeline test",
+    "github": "kodji7202-code"
+  },
+  "requires": {
+    "tools": [
+      "web-search"
+    ]
+  },
+  "submittedAt": "2026-10-27",
+  "updatedAt": "2026-10-27",
+  "status": "published",
+  "sourceIssue": 1
+}
