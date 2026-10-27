@@ -12,9 +12,8 @@ const sections = ["2.page", "2.submit", "2.email", "2.hosting", "2.automated"] a
 
 <Base locale={locale} title={`${t("privacy.title")} — OpenShelf`} description={t("privacy.description")}>
   <article class="prose">
-    <p class="draft">{t("legal.draft")}</p>
-    <h1>{t("privacy.title")}</h1>
-    <p class="note">{t("privacy.status")}</p>
+    <h1>{t("privacy.title")} <span class="draft">{t("legal.badge")}</span></h1>
+    <p class="draft-note">{t("privacy.status")}</p>
 
     <h2>1</h2>
     <p>{t("privacy.1")}</p>

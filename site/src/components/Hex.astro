@@ -1,0 +1,17 @@
+---
+// The OpenBot face: the one shape of the design. Every place that shows it uses this component,
+// so the geometry is defined once.
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<svg class={`hex ${className}`} viewBox="0 0 100 90" aria-hidden="true" focusable="false">
+  <path d="M27 4h46l23 41-23 41H27L4 45z"></path>
+  <g class="eyes">
+    <ellipse cx="38" cy="56" rx="7" ry="11"></ellipse>
+    <ellipse cx="62" cy="56" rx="7" ry="11"></ellipse>
+  </g>
+</svg>

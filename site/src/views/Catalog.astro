@@ -1,192 +1,285 @@
 ---
 import Base from "../layouts/Base.astro";
 import Card from "../components/Card.astro";
+import Hex from "../components/Hex.astro";
 import { href } from "../lib/urls";
-import { categoriesInUse, languagesInUse, published, languageName, repoUrl } from "../lib/templates";
-import { translator, type Locale } from "../i18n";
+import { categoriesInUse, categoryName, published, repoUrl } from "../lib/templates";
+import { taglinesEs, translator, type Locale } from "../i18n";
 
 interface Props {
   locale: Locale;
 }
-
 const { locale } = Astro.props;
 const t = translator(locale);
 const categories = categoriesInUse();
-const languages = languagesInUse();
 const total = published.length;
-const allLabel =
-  total === 0
-    ? t("count.none")
-    : total === 1
-      ? t("count.one")
-      : t("count.many", { count: total });
+const hero = published.find((template) => template.slug === "verificator") ?? published[0];
+const heroTagline = (locale === "es" ? taglinesEs[hero.slug] : undefined) ?? hero.tagline;
+const oneJob = hero.agent.description.split("\n")[0];
+const never = (hero.agent.description.match(/Anti-jobs:([^\n]*)/u)?.[1] ?? "").trim();
+const neverText = never ? never.charAt(0).toUpperCase() + never.slice(1) : "";
+const home = href("");
 const submitUrl = repoUrl("/issues/new?template=submit-template.yml");
-const title = t("page.title");
-const description = t("page.description");
 ---
 
-<Base locale={locale} title={title} description={description}>
+<Base locale={locale} title={t("page.title")} description={t("page.description")}>
   <section class="hero">
-    <p class="eyebrow">{t("hero.eyebrow")}</p>
-    <h1>{t("hero.title")}</h1>
-    <p>{t("hero.description")}</p>
-    <div class="hero-actions">
+    <div class="hero-copy">
+      <h1>{t("hero.title")}</h1>
+      <p class="lead">{t("hero.lead", { count: total })}</p>
       <a class="btn" href="#catalog">{t("hero.cta")}</a>
-      <p class="count" data-count data-all={allLabel}>{allLabel}</p>
+    </div>
+    <div class="stage" data-shutter>
+      <Hex class="stage-hex" />
+      <article class="profile" data-ui>
+        <header>
+          <Hex class="p-hex" />
+          <div>
+            <p class="p-name">{hero.name}</p>
+            <p class="p-sub">
+              {categoryName(hero.category, locale)} · {hero.language.toUpperCase()} · {t("card.by", { name: hero.creator.name })}
+            </p>
+          </div>
+          {hero.officialLink && (
+            <a class="p-install" href={hero.officialLink} rel="noopener noreferrer" target="_blank">
+              {t("card.install")}
+            </a>
+          )}
+        </header>
+        <p class="p-label">{locale === "es" ? "Su único trabajo" : "Its one job"}</p>
+        <p class="p-body">{oneJob}</p>
+        <p class="p-label">{locale === "es" ? "Lo que nunca hace" : "What it never does"}</p>
+        <p class="p-body">{neverText}</p>
+        <ul class="p-tags">
+          {hero.tags.map((tag) => <li>{tag}</li>)}
+        </ul>
+      </article>
     </div>
   </section>
 
-  <div id="catalog">
-    {
-      total > 0 && (
-        <section class="toolbar" aria-label={t("toolbar.label")} data-filter-root hidden>
-          <div class="search-field">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="11" cy="11" r="6.3" />
-              <path d="m16 16 4.2 4.2" stroke-linecap="round" />
-            </svg>
-            <label for="q" class="skip">
-              {t("search.label")}
-            </label>
-            <input id="q" type="search" placeholder={t("search.placeholder")} autocomplete="off" />
-            <span class="search-hint" aria-hidden="true">Ctrl K</span>
-          </div>
-          <label for="lang" class="skip">
-            {t("filter.language")}
-          </label>
-          <select id="lang">
-            <option value="all">{t("filter.language.all")}</option>
-            {languages.map((code) => (
-              <option value={code}>{languageName(code, locale)}</option>
-            ))}
-          </select>
-          <div class="chips" role="group" aria-label={t("filter.category")}>
-            <button type="button" class="chip" data-category="all" aria-pressed="true">
-              {t("filter.category.all")}
+  <section class="shelf" id="catalog" data-field="all" aria-labelledby="shelf-h">
+    <div class="shelf-head">
+      <h2 id="shelf-h">{t("shelf.title")}</h2>
+      <div class="tools" role="search">
+        <label class="search">
+          <span class="sr">{t("search.label")}</span>
+          <input id="q" type="search" placeholder={t("search.placeholder")} autocomplete="off" />
+        </label>
+        <div class="chips" role="group" aria-label={t("filter.category")}>
+          <button type="button" aria-pressed="true" data-c="all">
+            {t("filter.category.all")} {total}
+          </button>
+          {categories.map((code) => (
+            <button type="button" aria-pressed="false" data-c={code}>
+              {categoryName(code, locale)} {published.filter((template) => template.category === code).length}
             </button>
-            {categories.map((code) => (
-              <button type="button" class="chip" data-category={code} aria-pressed="false">
-                {t(`category.${code}` as never)}
-              </button>
-            ))}
-          </div>
-        </section>
-      )
-    }
-
-    <noscript>
-      <p class="noscript">{t("noscript")}</p>
-    </noscript>
-
-    {
-      total === 0 ? (
-        <div class="empty">
-          <strong>{t("empty.catalog.title")}</strong>
-          {t("empty.catalog.body")}{" "}
-          <a href={submitUrl} rel="noopener">{t("empty.catalog.action")}</a>.
-        </div>
-      ) : (
-        <ul class="grid" id="grid">
-          {published.map((template) => (
-            <Card template={template} locale={locale} />
           ))}
-        </ul>
-      )
-    }
-
-    <div class="empty hidden" data-empty>
-      <strong>{t("empty.filtered.title")}</strong>
-      {t("empty.filtered.body")}{" "}
-      <button type="button" class="chip" data-reset>{t("filter.clear")}</button>
+        </div>
+      </div>
     </div>
-  </div>
+    <ul class="rows">
+      {published.map((template) => <Card template={template} locale={locale} />)}
+    </ul>
+    <p class="count" aria-live="polite" data-count data-all={t("shelf.count", { count: total })} data-filtered={t("shelf.countFiltered")}>{t("shelf.count", { count: total })}</p>
+    <p class="empty" hidden data-empty>
+      {t("empty.filtered.title")}
+      <button type="button" class="btn small" data-reset>{t("filter.clear")}</button>
+    </p>
+    <p class="note">{t("catalog.note")}</p>
+  </section>
 
-  <p class="note">{t("catalog.note")}</p>
+  <section class="listed" id="listed" aria-labelledby="listed-h">
+    <div class="field f1">
+      <h2 id="listed-h">{t("listed.title")}</h2>
+      <div class="ticket" data-ui>
+        <p class="tk-name"><Hex class="tk-hex" />Look Up</p>
+        <p class="tk-meta">openbot.run/agents/sWcLx…</p>
+        <p class="tk-state">{t("listed.state1")}</p>
+      </div>
+      <p class="clause">{t("listed.clause1")}</p>
+    </div>
+    <div class="field f2">
+      <div class="ticket" data-ui>
+        <p class="tk-name"><Hex class="tk-hex" />Look Up</p>
+        <p class="tk-meta">openbot.run/agents/sWcLx…</p>
+        <p class="tk-state">{t("listed.state2")}</p>
+        <dl>
+          <dt>{t("listed.category")}</dt>
+          <dd>{categoryName("other", locale)}</dd>
+          <dt>{t("listed.tags")}</dt>
+          <dd>sky, events, alerts</dd>
+        </dl>
+      </div>
+      <p class="clause">{t("listed.clause2")}</p>
+    </div>
+    <div class="field f3">
+      <div class="ticket" data-ui>
+        <p class="tk-name"><Hex class="tk-hex" />Look Up</p>
+        <p class="tk-meta">openbot.run/agents/sWcLx…</p>
+        <p class="tk-state">{t("listed.state3")}</p>
+        <ul class="checks">
+          <li class="ok">{t("listed.check1")}</li>
+          <li class="ok">{t("listed.check2")}</li>
+          <li class="ok">{t("listed.check3")}</li>
+          <li>{t("listed.check4")}</li>
+        </ul>
+      </div>
+      <p class="clause">{t("listed.clause3")}</p>
+    </div>
+    <div class="field f4">
+      <div class="ticket" data-ui>
+        <p class="tk-name"><Hex class="tk-hex" />Look Up</p>
+        <p class="tk-meta">openbot.run/agents/sWcLx…</p>
+        <p class="tk-state on">{t("listed.state4")}</p>
+        <p class="tk-big">{total} / {total}</p>
+      </div>
+      <p class="clause">{t("listed.clause4")}</p>
+    </div>
+  </section>
+
+  <section class="about" id="about" aria-labelledby="about-h">
+    <div class="about-left">
+      <h2 id="about-h">{t("about.panel.title")}</h2>
+      <div class="zip" data-ui>
+        <p class="zip-title">{t("about.zip.title")}</p>
+        <ul>
+          <li><b>{t("about.zip.f1")}</b><span>{t("about.zip.f1d")}</span></li>
+          <li><b>{t("about.zip.f2")}</b><span>{t("about.zip.f2d")}</span></li>
+          <li><b>{t("about.zip.f3")}</b><span>{t("about.zip.f3d")}</span></li>
+        </ul>
+        <p class="zip-foot">{t("about.zip.foot")}</p>
+      </div>
+    </div>
+    <div class="about-right">
+      <div>
+        <h3>{t("about.panel.it")}</h3>
+        <p>{t("about.panel.itBody")}</p>
+      </div>
+      <div>
+        <h3>{t("about.panel.not")}</h3>
+        <p>{t("about.panel.notBody")}</p>
+      </div>
+      <a class="btn accent" href={href(`${locale === "es" ? "es/" : ""}about/`)}>{t("about.panel.cta")}</a>
+    </div>
+  </section>
+
+  <section class="faq" aria-labelledby="faq-h">
+    <h2 id="faq-h">{t("faq.title")}</h2>
+    <div class="tiles">
+      {[
+        ["faq.q1", "faq.a1"],
+        ["faq.q2", "faq.a2"],
+        ["faq.q3", "faq.a3"],
+        ["faq.q4", "faq.a4"],
+        ["faq.q5", "faq.a5"],
+        ["faq.q6", "faq.a6"],
+      ].map(([q, a]) => (
+        <details name="faq">
+          <summary>
+            {t(q as never)}
+            <span class="plus" aria-hidden="true"></span>
+          </summary>
+          <p>{t(a as never)}</p>
+        </details>
+      ))}
+    </div>
+  </section>
 </Base>
 
 <script>
-  const root = document.querySelector<HTMLElement>("[data-filter-root]");
-  const cards = Array.from(document.querySelectorAll<HTMLElement>(".card"));
-  const grid = document.getElementById("grid");
-  const emptyState = document.querySelector<HTMLElement>("[data-empty]");
+  const q = document.getElementById("q") as HTMLInputElement | null;
+  const shelf = document.getElementById("catalog") as HTMLElement | null;
+  const rows = [...document.querySelectorAll<HTMLElement>(".row")];
+  const chips = [...document.querySelectorAll<HTMLButtonElement>(".chips button")];
   const count = document.querySelector<HTMLElement>("[data-count]");
-  const total = cards.length;
-  const filteredTemplate = document.documentElement.lang === "es" ? "{shown} de {total} plantillas." : "{shown} of {total} templates.";
+  const empty = document.querySelector<HTMLElement>("[data-empty]");
+  const labels = {
+    all: count?.dataset.all ?? count?.textContent ?? "",
+    total: rows.length,
+    filtered: count?.dataset.filtered ?? "",
+  };
+  let cat = "all";
 
-  if (root && grid && emptyState && count) {
-    // The controls only exist for a browser that can use them; without this line they stay hidden.
-    root.hidden = false;
-    const input = root.querySelector<HTMLInputElement>("input[type=search]");
-    const select = root.querySelector<HTMLSelectElement>("select");
-    const chips = Array.from(root.querySelectorAll<HTMLButtonElement>(".chip"));
-    const allLabel = count.dataset.all ?? "";
-    let category = "all";
-
-    const apply = (updateUrl = true) => {
-      const query = (input?.value ?? "").trim().toLowerCase();
-      const language = select?.value ?? "all";
-      let shown = 0;
-      for (const card of cards) {
-        const matchesQuery = query === "" || (card.dataset.haystack ?? "").includes(query);
-        const matchesCategory = category === "all" || card.dataset.category === category;
-        const matchesLanguage = language === "all" || card.dataset.language === language;
-        const visible = matchesQuery && matchesCategory && matchesLanguage;
-        card.classList.toggle("hidden", !visible);
-        if (visible) shown += 1;
-      }
-      const list = document.querySelector(".grid");
-      list?.classList.toggle("hidden", shown === 0);
-      emptyState.classList.toggle("hidden", shown > 0);
+  const apply = () => {
+    if (!q || !shelf) return;
+    const s = q.value.trim().toLowerCase();
+    let n = 0;
+    for (const row of rows) {
+      const ok = (cat === "all" || row.dataset.cat === cat) && (!s || (row.dataset.hay ?? "").includes(s));
+      row.hidden = !ok;
+      if (ok) n += 1;
+    }
+    if (count) {
       count.textContent =
-        shown === total ? allLabel : filteredTemplate.replace("{shown}", String(shown)).replace("{total}", String(total));
-      if (updateUrl) {
-        const params = new URLSearchParams();
-        if (query) params.set("q", query);
-        if (category !== "all") params.set("cat", category);
-        if (language !== "all") params.set("lang", language);
-        const search = params.toString();
-        history.replaceState(null, "", search ? `?${search}` : location.pathname);
-      }
-    };
+        n === rows.length
+          ? labels.all
+          : labels.filtered.replace("{shown}", String(n)).replace("{total}", String(rows.length));
+    }
+    if (empty) empty.hidden = n > 0;
+    shelf.dataset.field = cat;
+  };
 
-    const clear = () => {
-      if (input) input.value = "";
-      if (select) select.value = "all";
-      category = "all";
-      for (const chip of chips) chip.setAttribute("aria-pressed", String(chip.dataset.category === "all"));
+  chips.forEach((chip) =>
+    chip.addEventListener("click", () => {
+      cat = chip.dataset.c ?? "all";
+      chips.forEach((other) => other.setAttribute("aria-pressed", String(other === chip)));
       apply();
-      input?.focus();
-    };
+    }),
+  );
+  q?.addEventListener("input", apply);
+  document.querySelector("[data-reset]")?.addEventListener("click", () => {
+    if (q) q.value = "";
+    cat = "all";
+    chips.forEach((other) => other.setAttribute("aria-pressed", String(other.dataset.c === "all")));
+    apply();
+    q?.focus();
+  });
 
-    for (const chip of chips) {
-      chip.addEventListener("click", () => {
-        category = chip.dataset.category ?? "all";
-        for (const other of chips) other.setAttribute("aria-pressed", String(other === chip));
-        apply();
-      });
+  // Type anywhere: a printable key outside a field starts the search.
+  document.addEventListener("keydown", (event) => {
+    const target = event.target as HTMLElement;
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      q?.focus();
+      return;
     }
-    input?.addEventListener("input", () => apply());
-    select?.addEventListener("change", () => apply());
-    emptyState.querySelector("[data-reset]")?.addEventListener("click", clear);
+    if (event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (/input|textarea|select/i.test(target.tagName)) return;
+    q?.focus();
+    shelf?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  });
 
-    const focusSearch = () => input?.focus();
-    document.addEventListener("keydown", (event) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        focusSearch();
-      }
-    });
-
-    const initial = new URLSearchParams(location.search);
-    if (input) input.value = initial.get("q") ?? "";
-    const initialCategory = initial.get("cat");
-    if (initialCategory && chips.some((chip) => chip.dataset.category === initialCategory)) {
-      category = initialCategory;
-      for (const chip of chips) chip.setAttribute("aria-pressed", String(chip.dataset.category === category));
-    }
-    const initialLanguage = initial.get("lang");
-    if (select && initialLanguage && Array.from(select.options).some((option) => option.value === initialLanguage))
-      select.value = initialLanguage;
-    apply(false);
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const eyes = document.querySelectorAll<SVGEllipseElement>(".stage-hex .eyes ellipse");
+    addEventListener(
+      "pointermove",
+      (event) => {
+        const x = (event.clientX / innerWidth - 0.5) * 6;
+        const y = (event.clientY / innerHeight - 0.5) * 6;
+        eyes.forEach((eye) => {
+          eye.style.transform = `translate(${x}px,${y}px)`;
+        });
+      },
+      { passive: true },
+    );
   }
+
+  const parts = document.querySelectorAll<HTMLElement>(
+    "main h2, .lead, .hero .btn, .tools, .row, .ticket, .clause, .zip, .about-right > *, details, .mark",
+  );
+  parts.forEach((element, index) => {
+    element.classList.add("rise");
+    element.style.setProperty("--i", String(index % 6));
+  });
+  const io = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        }
+      }),
+    { rootMargin: "0px 0px -8% 0px" },
+  );
+  parts.forEach((element) => io.observe(element));
 </script>

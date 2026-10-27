@@ -1,4 +1,5 @@
 ---
+import Hex from "./Hex.astro";
 import { categoryName, languageName, type Template } from "../lib/templates";
 import { href } from "../lib/urls";
 import { taglinesEs, translator, type Locale } from "../i18n";
@@ -11,50 +12,42 @@ interface Props {
 const { template, locale } = Astro.props;
 const t = translator(locale);
 const link = href(`${locale === "es" ? "es/" : ""}t/${template.slug}/`);
-const tagline =
-  (locale === "es" ? taglinesEs[template.slug] : undefined) ?? template.tagline;
+const tagline = (locale === "es" ? taglinesEs[template.slug] : undefined) ?? template.tagline;
 const haystack = [
   template.name,
   tagline,
   template.tagline,
-  template.description,
   template.category,
   categoryName(template.category, "en"),
   categoryName(template.category, "es"),
   template.language,
   languageName(template.language, "en"),
-  languageName(template.language, "es"),
-  template.creator.name,
-  template.creator.github,
   ...template.tags,
-  ...template.agent.skills,
 ].join(" ").toLowerCase();
+const official = Boolean(template.officialLink);
 ---
 
 <li
-  class="card"
-  data-category={template.category}
+  class="row"
+  data-cat={template.category}
   data-language={template.language}
+  data-hay={haystack}
+  data-category={template.category}
   data-haystack={haystack}
-  data-name={template.name.toLowerCase()}
 >
-  <div class="meta">
-    <span class="tag">{categoryName(template.category, locale)}</span>
-    <span class="pill">{languageName(template.language, locale)}</span>
-  </div>
-  <h2><a href={link}>{template.name}</a></h2>
-  <p>{tagline}</p>
-  <div class="footer">
-    <span class="by" title={t("card.by", { name: template.creator.name })}>
-      {t("card.by", { name: template.creator.name })}
-    </span>
-    {template.officialLink ? (
-      <a href={template.officialLink} target="_blank" rel="noopener noreferrer">
-        {t("card.install")}
+  <a class="row-name" href={link}>
+    <Hex class="bullet" />
+    <span>{template.name}</span>
+  </a>
+  <p class="row-job">{tagline}</p>
+  <p class="row-fact">
+    <span>{categoryName(template.category, locale)} · {template.language.toUpperCase()}</span>
+    {official ? (
+      <a class="act" href={template.officialLink} rel="noopener noreferrer" target="_blank">
+        {t("card.install")}<span class="sr"> {t("a11y.newTab")}</span>
       </a>
     ) : (
-      <a href={href(`downloads/${template.slug}.zip`)} download>{t("card.download")}</a>
+      <a class="act" href={href(`downloads/${template.slug}.zip`)} download>{t("card.download")}</a>
     )}
-    <a href={link}>{t("card.details")}</a>
-  </div>
+  </p>
 </li>
