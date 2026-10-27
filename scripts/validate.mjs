@@ -24,8 +24,8 @@ if (results.length === 0) {
 
 for (const result of results) {
   if (result.problems.length === 0) {
-    const votes = result.status === null ? "" : ` (link ${result.status})`;
-    console.log(`ok    ${result.name}${votes}`);
+    const linkNote = result.status === null ? "" : ` (link ${result.status})`;
+    console.log(`ok    ${result.name}${linkNote}`);
     continue;
   }
   console.log(`FAIL  ${result.name}`);
