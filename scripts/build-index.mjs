@@ -37,7 +37,7 @@ for (const result of results) {
   const issue = result.template?.sourceIssue;
   if (!Number.isInteger(issue) || issue < 1) continue;
   if (!votesAvailable) continue;
-  votes.set(result.name, await countUpvotes(repo, issue, token));
+  votes.set(result.name, await countUpvotes(repo, issue, result.template.officialLink, token));
 }
 if (!token) console.warn("GITHUB_TOKEN is not set: vote counts are reported as unknown.");
 
@@ -71,35 +71,61 @@ const published = templates.filter((template) => template.status === "published"
 console.log(`${templates.length} template(s) indexed, ${published} published, votes ${votesAvailable ? "read" : "unknown"}.`);
 console.log(`Wrote ${join("site", "src", "data", "templates.json")}.`);
 
-/** 👍 reactions on the submission issue, counted once per account. */
-async function countUpvotes(repository, issueNumber, githubToken) {
+/**
+ * 👍 reactions on the submission issue, counted once per account.
+ *
+ * `sourceIssue` sits in a file a contributor can edit, so a number alone proves nothing. It counts
+ * only when that issue carries the `submission` label and its body names the same official link:
+ * an arbitrary issue with many reactions cannot be borrowed that way.
+ */
+async function countUpvotes(repository, issueNumber, officialLink, githubToken) {
+  const submission = await api(`https://api.github.com/repos/${repository}/issues/${issueNumber}`, githubToken);
+  if (submission === null) return null;
+  const labels = Array.isArray(submission?.labels) ? submission.labels.map((label) => label?.name) : [];
+  if (!labels.includes("submission") || typeof submission?.body !== "string" || !submission.body.includes(officialLink)) {
+    console.warn(`#${issueNumber} is not the submission of ${officialLink}: votes reported as unknown.`);
+    return null;
+  }
+
   const users = new Set();
   let url = `https://api.github.com/repos/${repository}/issues/${issueNumber}/reactions?content=%2B1&per_page=100`;
   for (let page = 0; page < 5 && url; page += 1) {
-    let response;
-    try {
-      response = await fetch(url, {
-        headers: {
-          accept: "application/vnd.github+json",
-          authorization: `Bearer ${githubToken}`,
-          "x-github-api-version": "2022-11-28",
-          "user-agent": "openshelf-build",
-        },
-        signal: AbortSignal.timeout(10_000),
-      });
-    } catch (error) {
-      console.warn(`Votes for #${issueNumber} could not be read: ${error.message}`);
-      return null;
-    }
-    if (!response.ok) {
-      console.warn(`Votes for #${issueNumber} could not be read: HTTP ${response.status}`);
-      return null;
-    }
-    const items = await response.json();
-    for (const item of items) if (item?.user?.login) users.add(String(item.user.login).toLowerCase());
+    const response = await api(url, githubToken, { raw: true });
+    if (response === null) return null;
+    for (const item of await response.json())
+      if (item?.user?.login) users.add(String(item.user.login).toLowerCase());
     url = nextPage(response.headers.get("link"));
   }
   return users.size;
+}
+
+/** One GitHub API call. Null on any failure: a vote count never blocks a deploy. */
+async function api(url, githubToken, { raw = false } = {}) {
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        accept: "application/vnd.github+json",
+        authorization: `Bearer ${githubToken}`,
+        "x-github-api-version": "2022-11-28",
+        "user-agent": "openshelf-build",
+      },
+      signal: AbortSignal.timeout(10_000),
+    });
+  } catch (error) {
+    console.warn(`GitHub API call failed: ${error.message}`);
+    return null;
+  }
+  if (!response.ok) {
+    console.warn(`GitHub API answered ${response.status} for ${url.replace(/\?.*$/u, "")}`);
+    return null;
+  }
+  if (raw) return response;
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
 }
 
 function nextPage(link) {

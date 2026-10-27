@@ -28,7 +28,13 @@ export function openPullRequest({ branch, paths, message, title, body, repo }) {
   const status = run("git", ["status", "--porcelain"]);
   if (!status) return { changed: false, url: null };
   run("git", ["commit", "-m", message]);
-  run("git", ["push", "--force-with-lease", "origin", branch]);
+  // A re-run finds the branch from the first attempt. Fetch it, then replace it under a lease, so a
+  // force never overwrites something this run did not see.
+  const pushed = run("git", ["push", "origin", branch], { allowFailure: true });
+  if (typeof pushed !== "string") {
+    run("git", ["fetch", "origin", `refs/heads/${branch}:refs/remotes/origin/${branch}`], { allowFailure: true });
+    run("git", ["push", "--force-with-lease", "origin", branch]);
+  }
 
   const result = run(
     "gh",

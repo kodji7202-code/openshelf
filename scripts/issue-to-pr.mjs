@@ -27,6 +27,14 @@ if (!body || !Number.isInteger(issueNumber) || issueNumber < 1 || !author || !re
   process.exit(2);
 }
 
+// A crash after this point would otherwise leave the issue with no answer at all.
+process.on("unhandledRejection", (error) => {
+  const message = String(error?.message ?? error).slice(0, 300);
+  console.error(message);
+  commentOnIssue({ repo, number: issueNumber, body: `Eroare în workflow: ${message}` });
+  process.exit(1);
+});
+
 const say = (text) => console.log(text.replace(/\s+/gu, " ").slice(0, 400));
 
 let draft;
