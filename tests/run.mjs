@@ -55,6 +55,27 @@ await test("a slug is derived from a name with diacritics", async () => {
   assert.equal(slugify("  ---  "), "");
 });
 
+await test("more than six tags is refused, not trimmed", () => {
+  const body = [
+    "### Official template link",
+    "https://openbot.run/agents/PPPPPPPPPPPPPPPPPPPPPP",
+    "### Name",
+    "Seven tags",
+    "### Tagline",
+    "x",
+    "### Description",
+    "x",
+    "### Tags",
+    "unu, doi, trei, patru, cinci, sase, sapte",
+    "### Language",
+    "en",
+    "- [X] author",
+    "- [X] secrets",
+    "- [X] terms",
+  ].join("\n");
+  assert.throws(() => draftFromIssue({ body, issueNumber: 9, author: "kodji7202-code" }), /6/u);
+});
+
 await test("a realistic submission becomes a template that validates", async () => {
   const body = [
     "### Official template link",

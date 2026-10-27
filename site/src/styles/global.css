@@ -40,6 +40,11 @@
   box-sizing: border-box;
 }
 
+/* The filter toolbar is `hidden` until its script runs, and .toolbar sets display:flex. */
+[hidden] {
+  display: none !important;
+}
+
 html {
   color-scheme: light dark;
   -webkit-text-size-adjust: 100%;
@@ -510,7 +515,16 @@ footer.site nav {
   margin-left: auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.2rem 1rem;
+}
+
+/* 44px is the smallest comfortable target on a phone; the footer is where the legal links live. */
+footer.site nav a,
+header nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.15rem;
 }
 
 .noscript {

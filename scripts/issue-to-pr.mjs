@@ -78,7 +78,7 @@ await writeFile(file, renderTemplateFile(template), "utf8");
 const { failed, results } = await validateTemplates(templatesDir, { checkLinks: true });
 if (failed > 0) {
   const problems = results.flatMap((result) =>
-    result.problems.map((problem) => `- \`${result.name}\`: ${problem.field} ${problem.message}`),
+    result.problems.map((problem) => `- ${fieldLabel(problem.field)}: ${problem.message}`),
   );
   say(`invalid: ${problems.join(" | ")}`);
   commentOnIssue({
@@ -90,6 +90,7 @@ if (failed > 0) {
       ...problems.slice(0, 20),
       "",
       "Cauzele obișnuite: linkul oficial nu răspunde 200 (șablonul nu e publicat sau id-ul e greșit), un nume sau un link duplicat, sau un câmp cu markup.",
+      "Textul de după două puncte este mesajul validatorului, în engleză.",
       "Corectează issue-ul și editează-l; un moderator poate relansa verificarea.",
     ].join("\n"),
   });
@@ -167,4 +168,33 @@ if (result.url) {
       `Motiv tehnic: ${String(result.error ?? "necunoscut").slice(0, 300)}`,
     ].join("\n"),
   });
+}
+
+/** A field the contributor can recognise, so the refusal reads like a sentence and not like code. */
+function fieldLabel(field) {
+  const key = String(field ?? "")
+    .replace(/^\//u, "")
+    .replace(/\//gu, ".");
+  const labels = {
+    officialLink: "linkul oficial",
+    slug: "slug-ul",
+    name: "numele",
+    tagline: "tagline-ul",
+    description: "descrierea",
+    category: "categoria",
+    tags: "tag-urile",
+    language: "limba",
+    status: "statusul",
+    submittedAt: "data trimiterii",
+    updatedAt: "data actualizării",
+    template: "fișierul",
+    file: "fișierul",
+    "agent.title": "titlul agentului",
+    "agent.description": "instrucțiunile agentului",
+    "agent.skills": "skill-urile",
+    "creator.name": "numele autorului",
+    "creator.github": "handle-ul GitHub al autorului",
+    "requires.notes": "notițele despre cerințe",
+  };
+  return labels[key] ?? `câmpul ${key || "necunoscut"}`;
 }

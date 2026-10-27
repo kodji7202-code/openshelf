@@ -27,7 +27,7 @@ const description =
 
   {
     total > 0 && (
-      <section class="toolbar" aria-label="Caută și filtrează" data-filter-root>
+      <section class="toolbar" aria-label="Caută și filtrează" data-filter-root hidden>
         <label for="q" class="skip">
           Caută șabloane
         </label>
@@ -100,6 +100,8 @@ const description =
   const total = cards.length;
 
   if (root && grid && emptyState && count) {
+    // The controls only exist for a browser that can use them; without this line they stay hidden.
+    root.hidden = false;
     const input = root.querySelector<HTMLInputElement>("input[type=search]");
     const select = root.querySelector<HTMLSelectElement>("select");
     const chips = Array.from(root.querySelectorAll<HTMLButtonElement>(".chip"));

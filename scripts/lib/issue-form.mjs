@@ -133,8 +133,10 @@ export function draftFromIssue({ body, issueNumber, author, now = new Date() }) 
   const category = CATEGORIES.has(categoryRaw) ? categoryRaw : "other";
   if (categoryRaw && !CATEGORIES.has(categoryRaw)) warnings.push(`unknown category "${categoryRaw}", saved as "other"`);
 
-  const tags = [...new Set(list(get("tags")).map(slugify).filter(Boolean))].slice(0, 6);
+  const tags = [...new Set(list(get("tags")).map(slugify).filter(Boolean))];
   if (tags.length === 0) fail("at least one tag is required");
+  // Refuse, do not trim: a contributor who wrote seven tags must decide which one to drop.
+  if (tags.length > 6) fail(`are ${tags.length} tag-uri, iar limita este 6`);
 
   const languageRaw = oneLine(get("language")).toLowerCase();
   const language = /^[a-z]{2}(?:-[a-z]{2})?$/u.test(languageRaw) ? languageRaw : "en";
