@@ -98,7 +98,7 @@ if (failed > 0) {
 
 configureGit();
 
-const branch = `submit/${slug}`;
+const branch = `submit/${issueNumber}-${slug}`;
 const title = `Template: ${template.name}`;
 const prBody = [
   `Submission from #${issueNumber} by @${author}.`,
@@ -127,8 +127,23 @@ const result = openPullRequest({
   repo,
 });
 
+if (result.existing) {
+  say(`branch ${branch} already exists`);
+  commentOnIssue({
+    repo,
+    number: issueNumber,
+    body: `Există deja o ramură pentru acest issue (\`${branch}\`). Nu o suprascriu: poate conține corecții făcute de un moderator. Un moderator poate actualiza ramura sau deschide pull request-ul din ea.`,
+  });
+  process.exit(0);
+}
+
 if (!result.changed) {
   say("nothing to commit");
+  commentOnIssue({
+    repo,
+    number: issueNumber,
+    body: `Nu a fost nimic de comis: \`templates/${slug}.json\` există deja cu acest conținut.`,
+  });
   process.exit(0);
 }
 

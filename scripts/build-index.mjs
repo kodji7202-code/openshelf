@@ -11,6 +11,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { deepLink, nameKey, templateId } from "./lib/rules.mjs";
+import { parseIssueForm } from "./lib/issue-form.mjs";
 import { validateTemplates } from "./lib/validate.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -37,7 +38,8 @@ for (const result of results) {
   const issue = result.template?.sourceIssue;
   if (!Number.isInteger(issue) || issue < 1) continue;
   if (!votesAvailable) continue;
-  votes.set(result.name, await countUpvotes(repo, issue, result.template.officialLink, token));
+  // Keyed by slug, the one identifier the file name, the branch and the page all share.
+  votes.set(result.template.slug, await countUpvotes(repo, issue, result.template.officialLink, token));
 }
 if (!token) console.warn("GITHUB_TOKEN is not set: vote counts are reported as unknown.");
 
@@ -48,7 +50,7 @@ const templates = results
       ...template,
       id,
       deepLink: deepLink(template.officialLink),
-      votes: votes.has(template.name) ? votes.get(template.name) : null,
+      votes: votes.has(template.slug) ? votes.get(template.slug) : null,
     };
   })
   .sort((left, right) => {
@@ -82,8 +84,13 @@ async function countUpvotes(repository, issueNumber, officialLink, githubToken) 
   const submission = await api(`https://api.github.com/repos/${repository}/issues/${issueNumber}`, githubToken);
   if (submission === null) return null;
   const labels = Array.isArray(submission?.labels) ? submission.labels.map((label) => label?.name) : [];
-  if (!labels.includes("submission") || typeof submission?.body !== "string" || !submission.body.includes(officialLink)) {
-    console.warn(`#${issueNumber} is not the submission of ${officialLink}: votes reported as unknown.`);
+  // The link must be in the field the form writes, not anywhere in the body: an old issue of this
+  // repository that merely quotes the link (a report, a comment thread) must not lend its votes.
+  const declared = parseIssueForm(submission?.body ?? "").get("Official template link")?.trim();
+  if (!labels.includes("submission") || declared !== officialLink) {
+    console.warn(
+      `#${issueNumber} is not the submission of ${officialLink} (link field: ${declared ?? "missing"}): votes reported as unknown.`,
+    );
     return null;
   }
 

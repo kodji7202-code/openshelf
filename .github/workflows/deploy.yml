@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       # Reads the 👍 reactions of the submission issues. Read-only, and absent on a fork.
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,7 +39,9 @@ jobs:
       - name: Validate
         run: |
           npm test
-          node scripts/validate.mjs --links
+          # No link check here: a link that breaks later must not block a deploy of unrelated
+          # changes. Admission checks the link on the pull request; the weekly job watches health.
+          node scripts/validate.mjs
 
       - name: Build
         run: npm run build
@@ -51,6 +55,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

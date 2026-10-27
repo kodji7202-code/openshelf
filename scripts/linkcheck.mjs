@@ -34,6 +34,8 @@ const changes = [];
 const now = new Date().toISOString();
 
 for (const { template, name } of results) {
+  // A delisted template is out of the list on purpose; its link is not the catalogue's health.
+  if (template.status !== "published") continue;
   const id = templateId(template.officialLink);
   if (!id) continue;
   const status = await check(template.officialLink);

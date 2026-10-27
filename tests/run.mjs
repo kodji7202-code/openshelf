@@ -220,6 +220,54 @@ await test("a duplicate official link is refused across files", async () => {
   assert.equal(failed, 1, "the second file must fail on the shared link");
 });
 
+await test("a file that parses to the wrong type is refused", async () => {
+  const dir = join(tmp, "shapes");
+  await mkdir(dir, { recursive: true });
+  const shapes = { empty: "", null: "null", false: "false", zero: "0", string: '""', array: "[]" };
+  for (const [name, body] of Object.entries(shapes)) await writeFile(join(dir, `${name}.json`), body, "utf8");
+  const { results, failed } = await validateTemplates(dir);
+  assert.equal(results.length, 6);
+  assert.equal(failed, 6, results.map((result) => `${result.name}: ${result.problems.length}`).join(", "));
+});
+
+await test("a delisted template is not gated on its link, a published one is", async () => {
+  const base = {
+    schemaVersion: 1,
+    name: "Link state",
+    tagline: "x",
+    description: "x",
+    category: "other",
+    tags: ["x"],
+    language: "en",
+    agent: { title: "x", description: "x", skills: [], routines: false },
+    officialLink: "https://openbot.run/agents/OOOOOOOOOOOOOOOOOOOOOO",
+    creator: { name: "x", github: "kodji7202-code" },
+    submittedAt: "2026-10-27",
+    updatedAt: "2026-10-27",
+  };
+  const gone = async () => ({ status: 404, body: null });
+
+  const delistedDir = join(tmp, "link-delisted");
+  await mkdir(delistedDir, { recursive: true });
+  await writeFile(
+    join(delistedDir, "gone.json"),
+    JSON.stringify({ ...base, slug: "gone", status: "delisted" }),
+    "utf8",
+  );
+  const delisted = await validateTemplates(delistedDir, { checkLinks: true, fetchImpl: gone });
+  assert.equal(delisted.failed, 0, "a delisted template must not be refused for its dead link");
+
+  const liveDir = join(tmp, "link-published");
+  await mkdir(liveDir, { recursive: true });
+  await writeFile(
+    join(liveDir, "gone.json"),
+    JSON.stringify({ ...base, slug: "gone", status: "published" }),
+    "utf8",
+  );
+  const published = await validateTemplates(liveDir, { checkLinks: true, fetchImpl: gone });
+  assert.equal(published.failed, 1, "a published template with a dead link must be refused");
+});
+
 await rm(tmp, { recursive: true, force: true });
 
 console.log(`\n${passed} passed, ${failures.length} failed.`);

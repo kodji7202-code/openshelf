@@ -33,6 +33,17 @@ export async function templateFiles(dir) {
     .sort();
 }
 
+function isPlainObject(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function describe(value) {
+  if (value === null) return "null";
+  if (Array.isArray(value)) return "an array";
+  if (typeof value === "string") return `the string "${value.slice(0, 20)}"`;
+  return `${typeof value} ${JSON.stringify(value)}`;
+}
+
 function ajvMessage(error) {
   const at = error.instancePath === "" ? "template" : error.instancePath.slice(1);
   if (error.keyword === "additionalProperties") return `${at}: unknown field "${error.params.additionalProperty}"`;
@@ -64,17 +75,33 @@ export async function validateTemplates(dir, { checkLinks = false, fetchImpl = f
     } catch (error) {
       problems.push({ field: "file", message: `cannot be read: ${error.message}` });
     }
-    if (raw) {
+    if (raw.trim() === "") problems.push({ field: "file", message: "is empty" });
+    else if (raw) {
+      let parsed;
+      let wasJson = false;
       try {
-        template = JSON.parse(raw);
+        parsed = JSON.parse(raw);
+        wasJson = true;
       } catch (error) {
         problems.push({ field: "file", message: `is not valid JSON: ${error.message}` });
       }
-    }
-    if (template) {
-      if (!validate(template))
-        for (const error of validate.errors ?? []) problems.push({ field: error.instancePath, message: ajvMessage(error) });
-      problems.push(...templateRules(template, { fileName: name }));
+      // `null`, `false`, `0`, `""` and `[]` all parse. They are templates of the wrong type, not
+      // templates without problems, so the schema runs on whatever came out of the parse.
+      if (wasJson) {
+        if (isPlainObject(parsed)) {
+          template = parsed;
+          if (!validate(parsed)) {
+            for (const error of validate.errors ?? [])
+              problems.push({ field: error.instancePath, message: ajvMessage(error) });
+          }
+          problems.push(...templateRules(parsed, { fileName: name }));
+        } else {
+          problems.push({
+            field: "template",
+            message: `must be a JSON object, not ${describe(parsed)}`,
+          });
+        }
+      }
     }
     results.push({ file, name, template, problems, status: null });
   }
@@ -99,6 +126,9 @@ export async function validateTemplates(dir, { checkLinks = false, fetchImpl = f
   if (checkLinks) {
     const seen = new Map();
     for (const result of results) {
+      // A delisted template is listed without its link working: that is why it was delisted. Link
+      // health for the published ones is the weekly job's business, not this gate's.
+      if (result.template?.status !== "published") continue;
       const id = templateId(result.template?.officialLink);
       if (!id) continue;
       if (!seen.has(id)) seen.set(id, await fetchStatus(result.template.officialLink, fetchImpl, timeoutMs));

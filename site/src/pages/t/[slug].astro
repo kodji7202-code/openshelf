@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { href } from "../../lib/urls";
 import { categoryName, languageName, repoUrl, templates } from "../../lib/templates";
 
 export function getStaticPaths() {
@@ -7,7 +8,6 @@ export function getStaticPaths() {
 }
 
 const { template } = Astro.props;
-const base = import.meta.env.BASE_URL;
 const delisted = template.status === "delisted";
 const votes = template.votes === null ? "indisponibil" : String(template.votes);
 const toolNames: Record<string, string> = {
@@ -24,7 +24,7 @@ const description = template.tagline;
 ---
 
 <Base {title} {description} noindex={delisted}>
-  <a class="back" href={base}>← Toate șabloanele</a>
+  <a class="back" href={href()}>← Toate șabloanele</a>
 
   {
     delisted && (

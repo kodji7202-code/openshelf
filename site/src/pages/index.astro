@@ -3,7 +3,6 @@ import Base from "../layouts/Base.astro";
 import Card from "../components/Card.astro";
 import { categoriesInUse, categoryName, languagesInUse, languageName, published } from "../lib/templates";
 
-const base = import.meta.env.BASE_URL;
 const categories = categoriesInUse();
 const languages = languagesInUse();
 const total = published.length;
@@ -140,7 +139,8 @@ const description =
     }
     input?.addEventListener("input", () => apply());
     select?.addEventListener("change", () => apply());
-    root.querySelector("[data-reset]")?.addEventListener("click", () => {
+    // The reset button lives in the empty-state block, outside the toolbar: look it up in the page.
+    emptyState.querySelector("[data-reset]")?.addEventListener("click", () => {
       if (input) input.value = "";
       if (select) select.value = "all";
       category = "all";

@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { href, base } from "../lib/urls";
 import { repoUrl } from "../lib/templates";
 
 interface Props {
@@ -9,7 +10,6 @@ interface Props {
 }
 
 const { title, description, noindex = false } = Astro.props;
-const base = import.meta.env.BASE_URL;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -21,7 +21,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
-    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="icon" href={href("favicon.svg")} type="image/svg+xml" />
     {noindex && <meta name="robots" content="noindex" />}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="OpenShelf" />
@@ -44,7 +44,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
           OpenShelf
         </a>
         <nav aria-label="Principal">
-          <a href={`${base}about/`}>Despre</a>
+          <a href={href("about/")}>Despre</a>
           <a href={repoUrl("")} rel="noopener">GitHub</a>
           <a href={repoUrl("/issues/new?template=submit-template.yml")} rel="noopener">Trimite un șablon</a>
         </nav>
@@ -65,7 +65,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
           șabloanele.
         </p>
         <nav aria-label="Legal și contribuții">
-          <a href={`${base}about/`}>Despre și reguli</a>
+          <a href={href("about/")}>Despre și reguli</a>
           <a href={repoUrl("/blob/main/DISCLAIMER.md")} rel="noopener">Disclaimer</a>
           <a href={repoUrl("/blob/main/README.md#licen%C8%9Be")} rel="noopener">Licențe</a>
           <a href={repoUrl("/blob/main/legal/TERMS.md")} rel="noopener">Termeni (ciornă)</a>

@@ -23,18 +23,23 @@ export function configureGit() {
  * same branch, for example).
  */
 export function openPullRequest({ branch, paths, message, title, body, repo }) {
+  // The branch belongs to one issue. If it already exists, it may hold a moderator's corrections:
+  // never force over it, and never rebuild it from today's main. A person decides.
+  const existing = run("git", ["ls-remote", "--heads", "origin", branch], { allowFailure: true });
+  if (typeof existing === "string" && existing.trim() !== "") {
+    return { changed: false, url: null, existing: true };
+  }
+  if (typeof existing !== "string") {
+    return { changed: false, url: null, error: `git ls-remote failed: ${existing.stderr}` };
+  }
+
   run("git", ["checkout", "-B", branch]);
   for (const path of paths) run("git", ["add", "--", path]);
   const status = run("git", ["status", "--porcelain"]);
   if (!status) return { changed: false, url: null };
   run("git", ["commit", "-m", message]);
-  // A re-run finds the branch from the first attempt. Fetch it, then replace it under a lease, so a
-  // force never overwrites something this run did not see.
-  const pushed = run("git", ["push", "origin", branch], { allowFailure: true });
-  if (typeof pushed !== "string") {
-    run("git", ["fetch", "origin", `refs/heads/${branch}:refs/remotes/origin/${branch}`], { allowFailure: true });
-    run("git", ["push", "--force-with-lease", "origin", branch]);
-  }
+  // No force: a rejected push means someone else changed the branch, and that is a person's call.
+  run("git", ["push", "origin", branch]);
 
   const result = run(
     "gh",

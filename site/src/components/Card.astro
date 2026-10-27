@@ -1,5 +1,6 @@
 ---
 import { categoryName, languageName, type Template } from "../lib/templates";
+import { href } from "../lib/urls";
 
 interface Props {
   template: Template;
@@ -7,8 +8,7 @@ interface Props {
 }
 
 const { template } = Astro.props;
-const base = import.meta.env.BASE_URL;
-const href = `${base}t/${template.slug}/`;
+const link = href(`t/${template.slug}/`);
 const haystack = [
   template.name,
   template.tagline,
@@ -35,7 +35,7 @@ const haystack = [
     <span class="tag">{categoryName(template.category)}</span>
     <span class="pill">{languageName(template.language)}</span>
   </div>
-  <h2><a href={href}>{template.name}</a></h2>
+  <h2><a href={link}>{template.name}</a></h2>
   <p>{template.tagline}</p>
   <div class="footer">
     <span class="by" title={`Creat de ${template.creator.name}`}>de {template.creator.name}</span>

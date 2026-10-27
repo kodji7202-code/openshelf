@@ -58,8 +58,15 @@ Where this repository departs from `DESIGN.md`, and why:
   validation that matters already ran in the submission job, and a maintainer's click starts the
   rest. Pull requests from people run automatically.
 - **Votes are guarded.** `sourceIssue` lives in a file a contributor can edit, so a count is taken
-  only from an issue that carries the `submission` label and whose body names the same official
-  link. Anything else is reported as unknown, never as a number.
+  only from an issue that carries the `submission` label and whose *Official template link* field is
+  exactly this template's link. A report or a comment thread that merely quotes the link lends
+  nothing; anything else is reported as unknown, never as a number.
+- **A branch is never forced.** Each submission gets its own `submit/<issue>-<slug>` branch. If it
+  already exists, the workflow refuses to rebuild it, because it may hold a moderator's corrections,
+  and comments that a person has to act.
+- **A delisted template is not gated on its link.** Admission checks the link of a published
+  template; a broken link is why a template is delisted, and the weekly job watches the rest. Deploys
+  do not check links at all, so an outage elsewhere cannot block an unrelated change.
 
 ## Local development
 

@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { href } from "../lib/urls";
 import { repoUrl } from "../lib/templates";
 
 const base = import.meta.env.BASE_URL;
@@ -72,7 +73,7 @@ const base = import.meta.env.BASE_URL;
     </p>
 
     <p class="note">
-      <a href={base}>← Înapoi la catalog</a>
+      <a href={href()}>← Înapoi la catalog</a>
     </p>
   </article>
 </Base>
