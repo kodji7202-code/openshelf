@@ -1,22 +1,29 @@
 ---
 import { categoryName, languageName, type Template } from "../lib/templates";
 import { href } from "../lib/urls";
+import { taglinesEs, translator, type Locale } from "../i18n";
 
 interface Props {
   template: Template;
-  index: number;
+  locale: Locale;
 }
 
-const { template } = Astro.props;
-const link = href(`t/${template.slug}/`);
+const { template, locale } = Astro.props;
+const t = translator(locale);
+const link = href(`${locale === "es" ? "es/" : ""}t/${template.slug}/`);
+const tagline =
+  (locale === "es" ? taglinesEs[template.slug] : undefined) ?? template.tagline;
 const haystack = [
   template.name,
+  tagline,
   template.tagline,
   template.description,
   template.category,
-  categoryName(template.category),
+  categoryName(template.category, "en"),
+  categoryName(template.category, "es"),
   template.language,
-  languageName(template.language),
+  languageName(template.language, "en"),
+  languageName(template.language, "es"),
   template.creator.name,
   template.creator.github,
   ...template.tags,
@@ -32,18 +39,22 @@ const haystack = [
   data-name={template.name.toLowerCase()}
 >
   <div class="meta">
-    <span class="tag">{categoryName(template.category)}</span>
-    <span class="pill">{languageName(template.language)}</span>
+    <span class="tag">{categoryName(template.category, locale)}</span>
+    <span class="pill">{languageName(template.language, locale)}</span>
   </div>
   <h2><a href={link}>{template.name}</a></h2>
-  <p>{template.tagline}</p>
+  <p>{tagline}</p>
   <div class="footer">
-    <span class="by" title={`Creat de ${template.creator.name}`}>de {template.creator.name}</span>
+    <span class="by" title={t("card.by", { name: template.creator.name })}>
+      {t("card.by", { name: template.creator.name })}
+    </span>
     {template.officialLink ? (
-      <a class="by" href={template.officialLink} target="_blank" rel="noopener noreferrer">Install</a>
+      <a href={template.officialLink} target="_blank" rel="noopener noreferrer">
+        {t("card.install")}
+      </a>
     ) : (
-      <a class="by" href={href(`downloads/${template.slug}.zip`)} download>Download .zip</a>
+      <a href={href(`downloads/${template.slug}.zip`)} download>{t("card.download")}</a>
     )}
-    <a class="by" href={link}>Detalii →</a>
+    <a href={link}>{t("card.details")}</a>
   </div>
 </li>

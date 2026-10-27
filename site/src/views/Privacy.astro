@@ -1,0 +1,46 @@
+---
+import Base from "../layouts/Base.astro";
+import { translator, type Locale } from "../i18n";
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = translator(locale);
+const sections = ["2.page", "2.submit", "2.email", "2.hosting", "2.automated"] as const;
+---
+
+<Base locale={locale} title={`${t("privacy.title")} — OpenShelf`} description={t("privacy.description")}>
+  <article class="prose">
+    <p class="draft">{t("legal.draft")}</p>
+    <h1>{t("privacy.title")}</h1>
+    <p class="note">{t("privacy.status")}</p>
+
+    <h2>1</h2>
+    <p>{t("privacy.1")}</p>
+
+    <h2>2</h2>
+    <p>{t("privacy.2.intro")}</p>
+    <ul>
+      {sections.map((key) => <li>{t(`privacy.${key}` as never)}</li>)}
+    </ul>
+
+    <h2>3</h2>
+    <p>{t("privacy.3")}</p>
+
+    <h2>4</h2>
+    <p>{t("privacy.4")}</p>
+
+    <h2>5</h2>
+    <p>{t("privacy.5")}</p>
+
+    <h2>6</h2>
+    <p>{t("privacy.6")}</p>
+
+    <h2>7</h2>
+    <p>{t("privacy.7")}</p>
+
+    <h2>8</h2>
+    <p>{t("privacy.8")}</p>
+  </article>
+</Base>

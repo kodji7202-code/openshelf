@@ -291,6 +291,30 @@ await test("a delisted template is not gated on its link, a published one is", a
   assert.equal(published.failed, 1, "a published template with a dead link must be refused");
 });
 
+await test("the two locales define the same keys, and Spanish covers every card", async () => {
+  const read = async (name) => readFile(join(root, "site", "src", "i18n", name), "utf8");
+  const keys = (source) => new Set([...source.matchAll(/^\s{2}"([^"]+)":/gmu)].map((match) => match[1]));
+  const en = keys(await read("en.ts"));
+  const es = keys(await read("es.ts"));
+  assert.ok(en.size > 80, `expected a full dictionary, got ${en.size} keys`);
+  assert.deepEqual([...en].filter((key) => !es.has(key)), [], "keys missing from the Spanish dictionary");
+  assert.deepEqual([...es].filter((key) => !en.has(key)), [], "keys that exist only in Spanish");
+
+  const index = await read("index.ts");
+  const taglines = new Set([...index.matchAll(/^\s{2}"([a-z0-9-]+)":/gmu)].map((match) => match[1]));
+  const templates = await templateFiles(join(root, "templates"));
+  for (const file of templates) {
+    const template = JSON.parse(await readFile(file, "utf8"));
+    assert.ok(taglines.has(template.slug), `no Spanish tagline for ${template.slug}`);
+  }
+});
+
+await test("the legal pages no longer promise votes that do not exist", async () => {
+  const es = await readFile(join(root, "site", "src", "i18n", "es.ts"), "utf8");
+  assert.equal(/"privacy\.2\.vote"/u.test(es), false, "privacy still describes voting");
+  assert.equal(/"terms\.[0-9]+"[^\n]*voto/iu.test(es), false, "terms still describe voting");
+});
+
 await test("every template ships a readable install archive", async () => {
   const files = await templateFiles(join(root, "templates"));
   assert.ok(files.length > 0, "expected the catalog to have templates");

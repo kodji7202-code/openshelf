@@ -1,0 +1,55 @@
+---
+import Base from "../layouts/Base.astro";
+import { repoUrl } from "../lib/templates";
+import { translator, type Locale } from "../i18n";
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = translator(locale);
+const title = t("about.title");
+const description = t("about.intro");
+---
+
+<Base locale={locale} title={`${title} — OpenShelf`} description={description}>
+  <article class="prose">
+    <h1>{title}</h1>
+    <p>{t("about.intro")}</p>
+
+    <h2 id="not">{t("about.not.title")}</h2>
+    <ul>
+      <li>{t("about.not.affiliated")}</li>
+      <li>{t("about.not.hosted")}</li>
+      <li>{t("about.not.responsible")}</li>
+      <li>{t("about.not.tracking")}</li>
+    </ul>
+
+    <h2 id="submit">{t("about.submit.title")}</h2>
+    <ol>
+      <li>{t("about.submit.1")}</li>
+      <li>{t("about.submit.2")}</li>
+      <li>{t("about.submit.3")}</li>
+      <li>{t("about.submit.4")}</li>
+    </ol>
+    <p class="note">{t("about.submit.note")}</p>
+    <p>
+      <a class="btn" href={repoUrl("/issues/new?template=submit-template.yml")} rel="noopener">
+        {t("nav.submit")}
+      </a>
+    </p>
+
+    <h2 id="votes">{t("about.votes.title")}</h2>
+    <p>{t("about.votes.body")}</p>
+
+    <h2 id="licenses">{t("about.licenses.title")}</h2>
+    <ul>
+      <li>{t("about.licenses.code")}</li>
+      <li>{t("about.licenses.templates")}</li>
+      <li>{t("about.licenses.legal")}</li>
+    </ul>
+
+    <h2 id="personal">{t("about.personal.title")}</h2>
+    <p>{t("about.personal.body")}</p>
+  </article>
+</Base>

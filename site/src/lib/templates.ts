@@ -6,6 +6,7 @@
 
 import { z } from "zod";
 import payload from "../data/templates.json";
+import { translator, type Locale } from "../i18n";
 
 const text = z.string().min(1);
 
@@ -65,15 +66,7 @@ export const templates: Template[] = parsed.data.templates;
 export const published = templates.filter((template) => template.status === "published");
 export const delisted = templates.filter((template) => template.status === "delisted");
 
-export const CATEGORIES = [
-  ["research", "Cercetare"],
-  ["dev", "Dezvoltare"],
-  ["media", "Media"],
-  ["business", "Business"],
-  ["ops", "Operațiuni"],
-  ["personal", "Personal"],
-  ["other", "Altele"],
-] as const;
+export const CATEGORY_IDS = ["research", "dev", "media", "business", "ops", "personal", "other"] as const;
 
 export const LANGUAGE_NAMES: Record<string, string> = {
   ro: "Română",
@@ -88,12 +81,13 @@ export const LANGUAGE_NAMES: Record<string, string> = {
   uk: "Українська",
 };
 
-export function languageName(code: string): string {
+export function languageName(code: string, locale: Locale = "en"): string {
+  if (code === "en" || code === "es") return translator(locale)(`locale.${code}` as never);
   return LANGUAGE_NAMES[code] ?? code.toUpperCase();
 }
 
-export function categoryName(code: string): string {
-  return CATEGORIES.find(([value]) => value === code)?.[1] ?? code;
+export function categoryName(code: string, locale: Locale = "en"): string {
+  return translator(locale)(`category.${code}` as never);
 }
 
 /** The languages that actually have a card, so the filter never offers an empty choice. */
@@ -102,9 +96,7 @@ export function languagesInUse(): string[] {
 }
 
 export function categoriesInUse(): string[] {
-  return CATEGORIES.map(([code]) => code).filter((code) =>
-    published.some((template) => template.category === code),
-  );
+  return CATEGORY_IDS.filter((code) => published.some((template) => template.category === code));
 }
 
 export function repoUrl(path = ""): string {

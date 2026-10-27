@@ -12,6 +12,7 @@
     "test": "node tests/run.mjs",
     "index": "node scripts/build-index.mjs",
     "zips": "node scripts/build-zips.mjs",
+    "check:site": "node scripts/check-site.mjs",
     "site:install": "npm --prefix site ci",
     "site:build": "npm --prefix site run build",
     "build": "npm run index && npm run zips && npm run site:build"

@@ -1,0 +1,168 @@
+---
+import Base from "../layouts/Base.astro";
+import { href } from "../lib/urls";
+import { categoryName, languageName, repoUrl, type Template } from "../lib/templates";
+import { taglinesEs, translator, type Locale } from "../i18n";
+
+interface Props {
+  template: Template;
+  locale: Locale;
+}
+
+const { template, locale } = Astro.props;
+const t = translator(locale);
+const delisted = template.status === "delisted";
+const catalogHref = href(locale === "es" ? "es/" : "");
+const tagline = (locale === "es" ? taglinesEs[template.slug] : undefined) ?? template.tagline;
+const toolNames: Record<string, string> = {
+  browser: "Browser",
+  "computer-use": "Computer Use",
+  github: "GitHub",
+  "web-search": locale === "es" ? "Búsqueda web" : "Web search",
+  files: locale === "es" ? "Archivos" : "Files",
+  shell: locale === "es" ? "Terminal" : "Terminal",
+};
+const title = `${template.name} — OpenShelf`;
+const description = tagline;
+const zip = href(`downloads/${template.slug}.zip`);
+---
+
+<Base locale={locale} title={title} description={description} noindex={delisted}>
+  <nav class="breadcrumb" aria-label={t("detail.back")}>
+    <a href={catalogHref}>{t("detail.back")}</a>
+    <span aria-hidden="true">/</span>
+    <span>{template.name}</span>
+  </nav>
+
+  {delisted && <div class="banner">{t("detail.delisted")}</div>}
+
+  <h1 class="title">{template.name}</h1>
+  <p class="lede">{tagline}</p>
+
+  <div class="meta" style="display:flex;gap:.45rem;flex-wrap:wrap">
+    <span class="tag">{categoryName(template.category, locale)}</span>
+    <span class="pill">{languageName(template.language, locale)}</span>
+    {template.tags.map((tag) => <span class="pill">{tag}</span>)}
+  </div>
+
+  <div class="columns">
+    <div>
+      <section class="panel">
+        <h2>{t("detail.about")}</h2>
+        <p>{template.description}</p>
+      </section>
+
+      <section class="panel">
+        <h2>{t("detail.contents")}</h2>
+        <dl class="facts">
+          <dt>{t("detail.title")}</dt>
+          <dd>{template.agent.title || template.name}</dd>
+          <dt>{t("detail.skills")}</dt>
+          <dd>{template.agent.skills.length === 0 ? t("detail.none") : template.agent.skills.join(", ")}</dd>
+          <dt>{t("detail.routines")}</dt>
+          <dd>{template.agent.routines ? t("detail.routinesYes") : t("detail.none")}</dd>
+        </dl>
+        <h3>{t("detail.instructions")}</h3>
+        <pre class="instructions">{template.agent.description}</pre>
+        <p class="note">{t("detail.instructionsNote")}</p>
+      </section>
+
+      {
+        template.requires && (
+          <section class="panel">
+            <h2>{t("detail.requirements")}</h2>
+            <p>
+              {template.requires.tools.length === 0
+                ? t("detail.noneRequired")
+                : template.requires.tools.map((tool) => toolNames[tool] ?? tool).join(", ")}
+            </p>
+            {template.requires.notes && <p class="note">{template.requires.notes}</p>}
+          </section>
+        )
+      }
+    </div>
+
+    <aside>
+      <section class="panel">
+        <h2>{t("detail.install")}</h2>
+        {
+          template.officialLink ? (
+            <>
+              <a class="btn" href={template.officialLink} target="_blank" rel="noopener noreferrer">
+                {t("detail.installOfficial")}
+              </a>
+              <p class="note">{t("detail.officialNote")}</p>
+              {template.deepLink && (
+                <div class="deeplink">
+                  <label class="skip" for="deep">{t("detail.installOfficial")}</label>
+                  <input id="deep" type="text" readonly value={template.deepLink} data-deep-link />
+                  <button class="btn quiet" type="button" data-copy>
+                    {locale === "es" ? "Copiar" : "Copy"}
+                  </button>
+                </div>
+              )}
+              <p class="note" data-copy-note hidden>{locale === "es" ? "Copiado." : "Copied."}</p>
+              <p class="note">{t("detail.zipNote")}</p>
+              <a class="btn quiet" href={zip} download>{t("detail.installZip")}</a>
+            </>
+          ) : (
+            <a class="btn" href={zip} download>{t("detail.installZip")}</a>
+          )
+        }
+        <h3>{t("import.title")}</h3>
+        <p class="note" style="margin-top:0">{t("import.intro")}</p>
+        <ol class="steps">
+          <li>{t("import.step1")}</li>
+          <li>{t("import.step2")}</li>
+          <li>{t("import.step3")}</li>
+        </ol>
+        <p class="note">{t("import.caution")}</p>
+        <p class="note">{t("detail.archiveNote")}</p>
+      </section>
+
+      <section class="panel">
+        <h2>{t("detail.author")}</h2>
+        <dl class="facts">
+          <dt>{t("detail.author")}</dt>
+          <dd>
+            <a href={`https://github.com/${template.creator.github}`} rel="noopener">{template.creator.name}</a>
+          </dd>
+          <dt>{t("detail.language")}</dt>
+          <dd>{languageName(template.language, locale)}</dd>
+          <dt>{t("detail.published")}</dt>
+          <dd><time datetime={template.submittedAt}>{template.submittedAt}</time></dd>
+          <dt>{t("detail.updated")}</dt>
+          <dd><time datetime={template.updatedAt}>{template.updatedAt}</time></dd>
+          <dt>{t("detail.source")}</dt>
+          <dd><a href={repoUrl(`/blob/main/templates/${template.slug}.json`)} rel="noopener">templates/{template.slug}.json</a></dd>
+        </dl>
+      </section>
+
+      <section class="panel">
+        <h2>{t("detail.report")}</h2>
+        <p class="note" style="margin-top:0">
+          {t("detail.reportBody")}{" "}
+          <a href={repoUrl(`/issues/new?title=${encodeURIComponent(`Report: ${template.name}`)}`)} rel="noopener">
+            {t("detail.reportAction")}
+          </a>. {t("detail.reportTail")}
+        </p>
+      </section>
+    </aside>
+  </div>
+</Base>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>("[data-copy]");
+  const field = document.querySelector<HTMLInputElement>("[data-deep-link]");
+  const note = document.querySelector<HTMLElement>("[data-copy-note]");
+
+  button?.addEventListener("click", async () => {
+    if (!field) return;
+    try {
+      await navigator.clipboard.writeText(field.value);
+      if (note) note.hidden = false;
+    } catch {
+      field.select();
+    }
+  });
+</script>

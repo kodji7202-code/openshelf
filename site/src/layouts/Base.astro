@@ -2,25 +2,34 @@
 import "../styles/global.css";
 import { href, base } from "../lib/urls";
 import { repoUrl } from "../lib/templates";
+import { translator, switchLocalePath, localePath, type Locale } from "../i18n";
 
 interface Props {
+  locale: Locale;
   title: string;
   description: string;
   noindex?: boolean;
 }
 
-const { title, description, noindex = false } = Astro.props;
+const { locale, title, description, noindex = false } = Astro.props;
+const t = translator(locale);
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const other: Locale = locale === "en" ? "es" : "en";
+const switchHref = switchLocalePath(other, Astro.url.pathname);
+const submitUrl = repoUrl("/issues/new?template=submit-template.yml");
 ---
 
 <!doctype html>
-<html lang="ro">
+<html lang={locale} data-locale={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
+    <link rel="alternate" hreflang="en" href={new URL(href(localePath("en", "")), Astro.site).href} />
+    <link rel="alternate" hreflang="es" href={new URL(href(localePath("es", "")), Astro.site).href} />
+    <link rel="alternate" hreflang="x-default" href={new URL(href(localePath("en", "")), Astro.site).href} />
     <link rel="icon" href={href("favicon.svg")} type="image/svg+xml" />
     {noindex && <meta name="robots" content="noindex" />}
     <meta property="og:type" content="website" />
@@ -29,13 +38,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
     <meta name="twitter:card" content="summary" />
+    <script is:inline>
+      // The stored choice wins; without one the stylesheet follows the system preference.
+      try {
+        const stored = localStorage.getItem("openshelf-theme");
+        if (stored === "light" || stored === "dark") document.documentElement.dataset.theme = stored;
+      } catch {}
+    </script>
   </head>
   <body>
-    <a class="skip" href="#main">Sari la conținut</a>
+    <a class="skip" href="#main">{locale === "en" ? "Skip to content" : "Saltar al contenido"}</a>
 
     <header class="site">
       <div class="wrap">
-        <a class="brand" href={base}>
+        <a class="brand" href={href(localePath(locale))}>
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M3 8.5h18M5.5 8.5V19a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V8.5" stroke-linecap="round" />
             <path d="M8 8.5V5.5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3" stroke-linecap="round" />
@@ -43,11 +59,45 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
           </svg>
           OpenShelf
         </a>
-        <nav aria-label="Principal">
-          <a href={href("about/")}>Despre</a>
-          <a href={repoUrl("")} rel="noopener">GitHub</a>
-          <a href={repoUrl("/issues/new?template=submit-template.yml")} rel="noopener">Trimite un șablon</a>
+        <nav class="primary" aria-label={locale === "en" ? "Main" : "Principal"}>
+          <a href={href(localePath(locale))}>{t("nav.home")}</a>
+          <a href={href(localePath(locale, "about/"))}>{t("nav.about")}</a>
         </nav>
+        <div class="header-tools">
+          <div class="lang-switch" role="group" aria-label={t("nav.language")}>
+            <a
+              href={locale === "en" ? Astro.url.pathname : switchHref}
+              aria-current={locale === "en" ? "true" : "false"}
+              hreflang="en"
+              lang="en"
+              title={t("locale.switch.en")}>EN</a
+            >
+            <a
+              href={locale === "es" ? Astro.url.pathname : switchHref}
+              aria-current={locale === "es" ? "true" : "false"}
+              hreflang="es"
+              lang="es"
+              title={t("locale.switch.es")}>ES</a
+            >
+          </div>
+          <button
+            class="icon-button"
+            type="button"
+            data-theme-toggle
+            data-label-light={t("theme.toLight")}
+            data-label-dark={t("theme.toDark")}
+            aria-label={t("theme.toDark")}
+          >
+            <svg data-theme-icon="sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7">
+              <circle cx="12" cy="12" r="4.2" />
+              <path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" stroke-linecap="round" />
+            </svg>
+            <svg data-theme-icon="moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" hidden>
+              <path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2Z" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <a class="btn small" href={submitUrl} rel="noopener">{t("nav.submit")}</a>
+        </div>
       </div>
     </header>
 
@@ -59,18 +109,75 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
     <footer class="site">
       <div class="wrap">
-        <p>
-          Proiect comunitar independent. <strong>Neafiliat, neaprobat și nesponsorizat</strong> de OpenBot sau de
-          Synthetify Labs sp. z o.o. „OpenBot” apare doar ca referință descriptivă la platforma pentru care există
-          șabloanele.
-        </p>
-        <nav aria-label="Legal și contribuții">
-          <a href={href("about/")}>Despre și reguli</a>
-          <a href={repoUrl("/blob/main/DISCLAIMER.md")} rel="noopener">Disclaimer</a>
-          <a href={repoUrl("/blob/main/README.md#licen%C8%9Be")} rel="noopener">Licențe</a>
-          <a href={repoUrl("/blob/main/legal/TERMS.md")} rel="noopener">Termeni (ciornă)</a>
-        </nav>
+        <div class="cols">
+          <div>
+            <a class="brand" href={href(localePath(locale))}>
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M3 8.5h18M5.5 8.5V19a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V8.5" stroke-linecap="round" />
+                <path d="M8 8.5V5.5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3" stroke-linecap="round" />
+                <path d="M9.5 12.5h5" stroke-linecap="round" />
+              </svg>
+              OpenShelf
+            </a>
+            <p>{t("footer.tagline")}</p>
+          </div>
+          <div>
+            <h2>{t("footer.explore")}</h2>
+            <ul>
+              <li><a href={href(localePath(locale))}>{t("footer.catalog")}</a></li>
+              <li><a href={submitUrl} rel="noopener">{t("footer.submit")}</a></li>
+              <li><a href={repoUrl("")} rel="noopener">{t("footer.github")}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h2>{t("footer.information")}</h2>
+            <ul>
+              <li><a href={href(localePath(locale, "about/"))}>{t("footer.about")}</a></li>
+              <li><a href={href(localePath(locale, "privacy/"))}>{t("footer.privacy")}</a></li>
+              <li><a href={href(localePath(locale, "terms/"))}>{t("footer.terms")}</a></li>
+              <li><a href={repoUrl("/blob/main/DISCLAIMER.md")} rel="noopener">{t("footer.disclaimer")}</a></li>
+              <li><a href={repoUrl("")} rel="noopener">{t("footer.source")}</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="fine">
+          <p>{t("footer.notAffiliated")}</p>
+          <p>{t("footer.licenses")}</p>
+          <p>{t("footer.draft")}</p>
+          <p>{t("footer.copyright")}</p>
+        </div>
       </div>
     </footer>
+
+    <script is:inline>
+      const toggle = document.querySelector("[data-theme-toggle]");
+      const sun = document.querySelector('[data-theme-icon="sun"]');
+      const moon = document.querySelector('[data-theme-icon="moon"]');
+      const isDark = () =>
+        document.documentElement.dataset.theme === "dark" ||
+        (!document.documentElement.dataset.theme &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+      const label = () =>
+        toggle?.setAttribute("aria-label", isDark() ? toggle.dataset.labelLight : toggle.dataset.labelDark);
+      if (toggle) {
+        toggle.dataset.labelLight = toggle.dataset.labelLight || "Switch to light theme";
+        toggle.dataset.labelDark = toggle.dataset.labelDark || "Switch to dark theme";
+        const paint = () => {
+          const dark = isDark();
+          if (sun) sun.hidden = dark;
+          if (moon) moon.hidden = !dark;
+          label();
+        };
+        paint();
+        toggle.addEventListener("click", () => {
+          const next = isDark() ? "light" : "dark";
+          document.documentElement.dataset.theme = next;
+          try {
+            localStorage.setItem("openshelf-theme", next);
+          } catch {}
+          paint();
+        });
+      }
+    </script>
   </body>
 </html>
