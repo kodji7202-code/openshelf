@@ -135,6 +135,12 @@ if (result.url) {
   commentOnIssue({
     repo,
     number: issueNumber,
-    body: "Am generat fișierul, dar nu am putut deschide pull request-ul automat. Un moderator îl poate deschide din ramura `submit/" + slug + "`.",
+    body: [
+      "Am generat fișierul, dar nu am putut deschide pull request-ul automat. Un moderator îl poate deschide din ramura `submit/" +
+        slug +
+        "`.",
+      "",
+      `Motiv tehnic: ${String(result.error ?? "necunoscut").slice(0, 300)}`,
+    ].join("\n"),
   });
 }
