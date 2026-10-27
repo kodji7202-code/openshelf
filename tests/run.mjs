@@ -115,7 +115,7 @@ await test("a realistic submission becomes a template that validates", async () 
   assert.deepEqual(template.agent.skills, ["source-check", "quote-verify"]);
   assert.deepEqual(template.requires.tools, ["web-search", "browser"]);
   assert.equal(template.status, "published");
-  assert.equal(template.sourceIssue, 42);
+  assert.equal("sourceIssue" in template, false, "a vote source is not part of the file");
 
   const file = join(tmp, `${slug}.json`);
   await writeFile(file, renderTemplateFile(template), "utf8");

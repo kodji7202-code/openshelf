@@ -177,7 +177,6 @@ export function draftFromIssue({ body, issueNumber, author, now = new Date() }) 
     submittedAt: today(now),
     updatedAt: today(now),
     status: "published",
-    sourceIssue: Number(issueNumber),
   };
 
   if (!/^[\x20-\x7E\p{L}\p{N}]+$/u.test(officialLink) || id === null) fail("the official link is not usable");

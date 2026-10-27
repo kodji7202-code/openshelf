@@ -57,10 +57,10 @@ Where this repository departs from `DESIGN.md`, and why:
   workflows for a pull request opened with `GITHUB_TOKEN`; the run appears as `action_required`. The
   validation that matters already ran in the submission job, and a maintainer's click starts the
   rest. Pull requests from people run automatically.
-- **Votes are guarded.** `sourceIssue` lives in a file a contributor can edit, so a count is taken
-  only from an issue that carries the `submission` label and whose *Official template link* field is
-  exactly this template's link. A report or a comment thread that merely quotes the link lends
-  nothing; anything else is reported as unknown, never as a number.
+- **No vote counter yet.** The submission issue number would sit in a file a contributor can edit, so
+a count could be borrowed from an old issue with reactions. Until the template-to-issue link can be
+proven, the site shows no counter at all; README's "Votes" section lists the two ways to bring it
+back.
 - **A branch is never forced.** Each submission gets its own `submit/<issue>-<slug>` branch. If it
   already exists, the workflow refuses to rebuild it, because it may hold a moderator's corrections,
   and comments that a person has to act.
@@ -98,9 +98,20 @@ link check opens that pull request on its own when a link fails twice in a row.
 
 ## Votes
 
-The number on a card is the count of 👍 reactions on the submission issue, read at build time through
-the GitHub API and counted once per account. It is never stored in a template file, so an author
-cannot write their own count. Without a token the build reports the count as unknown rather than zero.
+There are none, and that is a decision, not an omission. A vote count would have to come from
+something a contributor cannot re-point at another template. An issue number in a JSON file is not
+that: the author of an old submission can edit its link field, and a pull request can name that old
+issue, so a counter could be borrowed along with its reactions. A counter that can be forged is worse
+than no counter.
+
+Bringing votes back needs one of these, and neither is in place:
+
+- pull requests opened with a token of their own, so the workflow can prove the head branch
+  `submit/<issue>-<slug>` and read reactions from the pull request instead of an editable issue;
+- a submissions index the bot writes and a moderator merges, with the template id in it, so the
+  template-to-issue link is not contributor-editable.
+
+Until then, cards are ordered by the author's name, published first.
 
 ## Licences
 

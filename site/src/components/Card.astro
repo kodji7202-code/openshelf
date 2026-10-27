@@ -39,8 +39,6 @@ const haystack = [
   <p>{template.tagline}</p>
   <div class="footer">
     <span class="by" title={`Creat de ${template.creator.name}`}>de {template.creator.name}</span>
-    <span class="votes" title={template.votes === null ? "Voturile nu au putut fi citite la build" : `${template.votes} voturi`}>
-      👍 {template.votes === null ? "—" : template.votes}
-    </span>
+    <a class="by" href={href(`t/${template.slug}/`)}>Detalii →</a>
   </div>
 </li>

@@ -36,10 +36,8 @@ const templateSchema = z
     submittedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
     updatedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
     status: z.enum(["published", "delisted"]),
-    sourceIssue: z.number().int().positive().optional(),
     id: z.string().length(22),
     deepLink: z.string().regex(/^openbot:\/\/agents\/[A-Za-z0-9_-]{22}$/u),
-    votes: z.number().int().nonnegative().nullable(),
   })
   .strict();
 
@@ -47,7 +45,6 @@ const payloadSchema = z
   .object({
     generatedAt: z.string(),
     repo: z.string(),
-    votesAvailable: z.boolean(),
     templates: z.array(templateSchema),
   })
   .strict();
@@ -64,7 +61,6 @@ export type Template = z.infer<typeof templateSchema>;
 
 export const generatedAt = parsed.data.generatedAt;
 export const repo = parsed.data.repo;
-export const votesAvailable = parsed.data.votesAvailable;
 export const templates: Template[] = parsed.data.templates;
 export const published = templates.filter((template) => template.status === "published");
 export const delisted = templates.filter((template) => template.status === "delisted");

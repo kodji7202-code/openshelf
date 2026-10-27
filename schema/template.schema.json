@@ -111,12 +111,6 @@
       "type": "string",
       "enum": ["published", "delisted"],
       "description": "Only a moderator changes this. A delisted template stays in the repository and shows as delisted."
-    },
-    "sourceIssue": {
-      "type": "integer",
-      "minimum": 1,
-      "description": "Set by the issue-to-PR workflow: the submission issue whose reactions are the votes. Not accepted from a contributor.",
-      "readOnly": true
     }
   }
 }

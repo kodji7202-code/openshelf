@@ -9,7 +9,6 @@ export function getStaticPaths() {
 
 const { template } = Astro.props;
 const delisted = template.status === "delisted";
-const votes = template.votes === null ? "indisponibil" : String(template.votes);
 const toolNames: Record<string, string> = {
   browser: "Browser",
   "computer-use": "Computer Use",
@@ -107,8 +106,6 @@ const description = template.tagline;
           <dd>
             <a href={`https://github.com/${template.creator.github}`} rel="noopener">{template.creator.name}</a>
           </dd>
-          <dt>Voturi</dt>
-          <dd>{votes}</dd>
           <dt>Publicat</dt>
           <dd><time datetime={template.submittedAt}>{template.submittedAt}</time></dd>
           <dt>Actualizat</dt>

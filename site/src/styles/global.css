@@ -348,11 +348,6 @@ main {
   border-color: var(--muted);
 }
 
-.votes {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
 .empty {
   margin-top: 1.5rem;
   padding: 2.5rem 1.2rem;

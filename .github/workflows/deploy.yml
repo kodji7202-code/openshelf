@@ -20,8 +20,6 @@ jobs:
     permissions:
       contents: read
     env:
-      # Reads the 👍 reactions of the submission issues. Read-only, and absent on a fork.
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ASTRO_TELEMETRY_DISABLED: "1"
     steps:
       - uses: actions/checkout@v4
