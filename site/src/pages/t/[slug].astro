@@ -84,34 +84,38 @@ const description = template.tagline;
     <aside>
       <section class="panel">
         <h2>Instalare</h2>
-        <a class="btn" href={href(`downloads/${template.slug}.zip`)} download>Download .zip</a>
+        {template.officialLink ? (
+          <>
+            <a class="btn" href={template.officialLink} target="_blank" rel="noopener noreferrer">
+              Instalează din OpenBot
+            </a>
+            <p class="note">
+              Linkul deschide șablonul oficial în OpenBot. Instalarea este un click pe <strong>Install</strong> acolo;
+              OpenShelf nu poate instala nimic în locul tău.
+            </p>
+            {template.deepLink && (
+              <div class="deeplink">
+                <label class="skip" for="deep">Link direct pentru aplicația desktop</label>
+                <input id="deep" type="text" readonly value={template.deepLink} data-deep-link />
+                <button class="btn quiet" type="button" data-copy>Copiază</button>
+              </div>
+            )}
+            <p class="note" data-copy-note hidden>Copiat.</p>
+            <p class="note">Sau descarcă arhiva și import-o din Settings → Import.</p>
+          </>
+        ) : (
+          <a class="btn" href={href(`downloads/${template.slug}.zip`)} download>Download .zip</a>
+        )}
+        <p class="note">Arhiva conține profilul public al șablonului: nume, titlu, instrucțiuni și rutine, dacă există. Nu
+          conține fișiere din workspace, memorii sau secrete.</p>
+        {template.officialLink && (
+          <a class="btn quiet" href={href(`downloads/${template.slug}.zip`)} download>Download .zip</a>
+        )}
         <ol class="steps">
           <li>Deschide OpenBot și mergi la Settings.</li>
           <li>Alege Import și selectează arhiva descărcată.</li>
           <li>Confirmă: agentul apare în lista ta, cu instrucțiunile de mai sus.</li>
         </ol>
-        <p class="note">
-          Arhiva conține profilul public al șablonului: nume, titlu, instrucțiuni și rutine, dacă există. Nu
-          conține fișiere din workspace, memorii sau secrete.
-        </p>
-        {
-          template.officialLink && (
-            <>
-              <p class="note">Autorul are și un șablon oficial publicat.</p>
-              <a class="btn quiet" href={template.officialLink} target="_blank" rel="noopener noreferrer">
-                Deschide șablonul oficial
-              </a>
-              {template.deepLink && (
-                <div class="deeplink">
-                  <label class="skip" for="deep">Link direct pentru aplicația desktop</label>
-                  <input id="deep" type="text" readonly value={template.deepLink} data-deep-link />
-                  <button class="btn quiet" type="button" data-copy>Copiază</button>
-                </div>
-              )}
-              <p class="note" data-copy-note hidden>Copiat.</p>
-            </>
-          )
-        }
       </section>
 
       <section class="panel">
