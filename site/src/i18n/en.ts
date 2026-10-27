@@ -216,7 +216,7 @@ export default {
   "listed.category": "Category",
   "listed.tags": "Tags",
   "listed.check1": "Schema valid",
-  "listed.check2": "Link answers 200",
+  "listed.check2": "Link responds with 200",
   "listed.check3": "No secrets found",
   "listed.check4": "Moderator review",
   "about.panel.title": "A shelf, not a store",
@@ -238,13 +238,13 @@ export default {
   "faq.title": "Questions",
   "faq.q1": "What does Install do?",
   "faq.a1":
-    "It opens the official listing on openbot.run, where OpenBot installs the agent. OpenShelf installs nothing itself.",
+    "It opens the official listing on openbot.run, where OpenBot installs the agent. OpenShelf itself installs nothing.",
   "faq.q2": "How do I use a .zip?",
   "faq.a2":
     "Download it, then in OpenBot open Settings → Import and choose the file. The archive holds the agent's public profile only.",
   "faq.q3": "Is a template safe to run?",
   "faq.a3":
-    "Read its instructions first. Templates are written by independent authors; OpenShelf checks the schema, the link and for leaked secrets, not how an agent behaves.",
+    "Read its instructions first. Templates are written by independent authors; OpenShelf checks the schema, the link and leaked secrets, not how an agent behaves.",
   "faq.q4": "Who can submit a template?",
   "faq.a4": "Anyone with a published OpenBot agent. One account may publish up to five agents.",
   "faq.q5": "How is a listing removed?",

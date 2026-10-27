@@ -54,7 +54,7 @@ export default {
     "OpenShelf es un directorio comunitario de plantillas de agentes para OpenBot. Las indexa y describe para que sea fácil encontrarlas; la instalación se realiza en OpenBot, no aquí.",
   "about.not.title": "Lo que OpenShelf no es",
   "about.not.affiliated":
-    "OpenShelf no está afiliado a OpenBot ni a Synthetify Labs sp. z o.o., y ninguna de estas entidades lo respalda o patrocina.",
+    "OpenShelf no está afiliado a OpenBot ni a Synthetify Labs sp. z o.o., y ninguna de estas entidades lo respalda ni lo patrocina.",
   "about.not.hosted":
     "OpenShelf no aloja agentes. Sirve un archivo .zip con el perfil público de la plantilla, y el archivo se importa en OpenBot.",
   "about.not.responsible":
@@ -65,7 +65,7 @@ export default {
   "about.submit.1":
     "Publica el agente en OpenBot con Publish, en la cabecera del chat. Copia el enlace https://openbot.run/agents/<id>. Cada cuenta puede publicar hasta 5 agentes.",
   "about.submit.2":
-    "Abre Submit a template y añade el enlace, nombre, descripción, categoría, etiquetas e idioma.",
+    "Abre «Enviar una plantilla» y añade el enlace, nombre, descripción, categoría, etiquetas e idioma.",
   "about.submit.3":
     "Un flujo de trabajo convierte el envío en un pull request con templates/<slug>.json. El contenido se trata como texto; no se ejecuta nada.",
   "about.submit.4":
@@ -135,7 +135,7 @@ export default {
   "footer.disclaimer": "Aviso legal",
   "footer.source": "Código fuente",
   "footer.notAffiliated":
-    "OpenShelf es un proyecto comunitario independiente. No está afiliado a OpenBot ni a Synthetify Labs sp. z o.o., y ninguna lo respalda o patrocina. “OpenBot” solo identifica la plataforma para la que son estas plantillas.",
+    "OpenShelf es un proyecto comunitario independiente. No está afiliado a OpenBot ni a Synthetify Labs sp. z o.o., y ninguna de estas entidades lo respalda ni lo patrocina. “OpenBot” se usa de forma descriptiva, solo para identificar la plataforma para la que son estas plantillas.",
   "footer.licenses":
     "Código y scripts del sitio: MIT. Plantillas de agentes: CC BY 4.0, con atribución a cada autor.",
   "footer.draft": "La Política de privacidad y las Condiciones son borradores y no están vigentes.",
@@ -196,7 +196,7 @@ export default {
     "9. Cambios. Podemos cambiar estas condiciones; la fecha del archivo y el pull request dejan constancia. El uso continuado después de un cambio implica que se aplican las nuevas condiciones.",
   "terms.10":
     "10. Legislación aplicable. Se rigen por la legislación de [jurisdiction] y serán competentes los tribunales de [jurisdiction], sin perjuicio del derecho de los consumidores a acudir a los tribunales de su país de residencia.",
-  "hero.title": "Agentes OpenBot, un oficio cada uno",
+  "hero.title": "Agentes de OpenBot, un oficio cada uno",
   "hero.lead":
     "Una estantería comunitaria con {count} plantillas de agentes. Lee qué hace cada agente y qué rechaza hacer, e instálalo en OpenBot o descarga el .zip.",
   "hero.cta": "Ver la estantería",
@@ -222,7 +222,7 @@ export default {
   "about.panel.title": "Una estantería, no una tienda",
   "about.panel.it": "Qué es",
   "about.panel.itBody":
-    "Un directorio comunitario que indexa y describe plantillas de agentes para que sea fácil encontrarlas. La instalación ocurre en OpenBot, no aquí.",
+    "Un directorio comunitario que indexa y describe plantillas de agentes para que sea fácil encontrarlas. La instalación se hace en OpenBot, no aquí.",
   "about.panel.not": "Qué no es",
   "about.panel.notBody":
     "No está afiliado a OpenBot ni a Synthetify Labs, ni cuenta con su respaldo o patrocinio. Sin cuentas, sin cookies propias y sin rastreo.",
@@ -236,7 +236,7 @@ export default {
   "about.zip.f3d": "CC BY 4.0",
   "about.zip.foot": "Importar en OpenBot: Settings → Import",
   "faq.title": "Preguntas",
-  "faq.q1": "¿Qué hace Install?",
+  "faq.q1": "¿Qué hace «Instalar»?",
   "faq.a1":
     "Abre la ficha oficial en openbot.run, donde OpenBot instala el agente. OpenShelf no instala nada por sí mismo.",
   "faq.q2": "¿Cómo uso un .zip?",

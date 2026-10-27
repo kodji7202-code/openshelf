@@ -48,9 +48,12 @@ const submitUrl = repoUrl("/issues/new?template=submit-template.yml");
         </header>
         <p class="p-label">{locale === "es" ? "Su único trabajo" : "Its one job"}</p>
         <p class="p-body">{oneJob}</p>
-        <p class="p-label">{locale === "es" ? "Lo que nunca hace" : "What it never does"}</p>
-        <p class="p-body">{neverText}</p>
-        <ul class="p-tags">
+        {neverText && (
+          <>
+            <p class="p-label">{locale === "es" ? "Lo que nunca hace" : "What it never does"}</p>
+            <p class="p-body">{neverText}</p>
+          </>
+        )}        <ul class="p-tags">
           {hero.tags.map((tag) => <li>{tag}</li>)}
         </ul>
       </article>

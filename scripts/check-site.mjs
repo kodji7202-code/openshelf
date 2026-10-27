@@ -29,12 +29,19 @@ assert.equal((en.match(/class="row"/gu) ?? []).length, 13, "the shelf must list 
 assert.equal((en.match(new RegExp(official, "gu")) ?? []).length, 6, "five rows plus the hero profile have an official template");
 assert.equal((en.match(/href="\/openshelf\/downloads\/[a-z0-9-]+\.zip"/gu) ?? []).length, 8, "eight rows download an archive");
 assert.match(en, /data-theme-toggle/u, "the theme switch is part of the bar");
+assert.match(en, /rel="apple-touch-icon" sizes="180x180" href="\/openshelf\/apple-touch-icon\.png"/u, "the touch icon is linked");
+assert.match(en, /property="og:image" content="https:\/\/[^"]*\/openshelf\/og-image\.png"/u, "og:image is absolute");
+assert.match(en, /property="og:image:width" content="1200"/u);
+assert.match(en, /property="og:image:height" content="630"/u);
+assert.match(en, /name="twitter:card" content="summary_large_image"/u);
+assert.ok(existsSync(join(dist, "og-image.png")), "og-image.png must be deployed");
+assert.ok(existsSync(join(dist, "apple-touch-icon.png")), "apple-touch-icon.png must be deployed");
 assert.match(en, /How it gets listed/u);
 assert.match(en, /Questions/u);
 
 const es = await read("es/index.html");
 assert.match(es, /<html lang="es"/u);
-assert.match(es, /Agentes OpenBot, un oficio cada uno/u);
+assert.match(es, /Agentes de OpenBot, un oficio cada uno/u);
 assert.match(es, /href="\/openshelf\/"/u, "the Spanish page must switch back to the English home");
 assert.equal((es.match(/class="row"/gu) ?? []).length, 13);
 assert.match(es, /href="\/openshelf\/es\/t\/dev\/"/u, "Spanish rows link to Spanish details");
