@@ -42,6 +42,25 @@ state/link-health.json       consecutive failures per template
 legal/                       draft terms and privacy policy (not in force yet)
 ```
 
+## Implementation notes
+
+Where this repository departs from `DESIGN.md`, and why:
+
+- **No Astro content collections.** The templates are generated data, not authored content, so the
+  site imports one generated `site/src/data/templates.json`. `schema/template.schema.json` + `ajv`
+  stays the single authority on shape; `site/src/lib/templates.ts` re-checks the file with `zod` at
+  build time as a second lock. Two schemas describing the same fields would drift.
+- **The link check runs before the pull request exists.** The submission workflow validates the
+  generated file with `--links`, so a submission whose official link answers 404 never opens a pull
+  request. `validate.yml` stays the gate for changes made directly as pull requests.
+- **A bot-created pull request may need one approval click.** GitHub does not run `pull_request`
+  workflows for a pull request opened with `GITHUB_TOKEN`; the run appears as `action_required`. The
+  validation that matters already ran in the submission job, and a maintainer's click starts the
+  rest. Pull requests from people run automatically.
+- **Votes are guarded.** `sourceIssue` lives in a file a contributor can edit, so a count is taken
+  only from an issue that carries the `submission` label and whose body names the same official
+  link. Anything else is reported as unknown, never as a number.
+
 ## Local development
 
 ```bash

@@ -12,10 +12,11 @@ more, publish under another account or open a pull request that improves the dir
 Then open the [submission form](../../issues/new?template=submit-template.yml) and fill it in. What
 happens next:
 
-1. A workflow writes `templates/<slug>.json` and opens a pull request, then comments the link on your
-   issue.
-2. Validation runs: schema, slug equals file name, one entry per official link, one entry per name,
-   no credentials, no invisible characters, and the official link must answer HTTP 200.
+1. A workflow writes `templates/<slug>.json`, checks it against the schema and against the official
+   link (it must answer HTTP 200), and only then opens a pull request and comments the link on your
+   issue. A submission whose link does not resolve never becomes a pull request.
+2. Validation also runs on the pull request: schema, slug equals file name, one entry per official
+   link, one entry per name, no credentials, no invisible characters.
 3. A maintainer opens your template page, reads the instructions, and merges or asks for changes.
 
 Nothing is published without a merge. You can edit the issue afterwards; a maintainer can re-run the

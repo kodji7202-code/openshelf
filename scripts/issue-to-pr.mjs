@@ -75,7 +75,7 @@ if (existsSync(file)) {
 
 await writeFile(file, renderTemplateFile(template), "utf8");
 
-const { failed, results } = await validateTemplates(templatesDir, { checkLinks: false });
+const { failed, results } = await validateTemplates(templatesDir, { checkLinks: true });
 if (failed > 0) {
   const problems = results.flatMap((result) =>
     result.problems.map((problem) => `- \`${result.name}\`: ${problem.field} ${problem.message}`),
@@ -89,7 +89,8 @@ if (failed > 0) {
       "",
       ...problems.slice(0, 20),
       "",
-      "Corectează issue-ul și editează-l; validarea rulează din nou la următoarea relansare.",
+      "Cauzele obișnuite: linkul oficial nu răspunde 200 (șablonul nu e publicat sau id-ul e greșit), un nume sau un link duplicat, sau un câmp cu markup.",
+      "Corectează issue-ul și editează-l; un moderator poate relansa verificarea.",
     ].join("\n"),
   });
   process.exit(0);
