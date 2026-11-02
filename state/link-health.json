@@ -1,4 +1,30 @@
 {
-  "checkedAt": null,
-  "templates": {}
+  "checkedAt": "2026-11-02T14:44:08.905Z",
+  "templates": {
+    "cercetas": {
+      "status": 200,
+      "failures": 0,
+      "checkedAt": "2026-11-02T14:44:08.905Z"
+    },
+    "dev": {
+      "status": 200,
+      "failures": 0,
+      "checkedAt": "2026-11-02T14:44:08.905Z"
+    },
+    "look-up": {
+      "status": 200,
+      "failures": 0,
+      "checkedAt": "2026-11-02T14:44:08.905Z"
+    },
+    "verificator": {
+      "status": 200,
+      "failures": 0,
+      "checkedAt": "2026-11-02T14:44:08.905Z"
+    },
+    "video-studio": {
+      "status": 200,
+      "failures": 0,
+      "checkedAt": "2026-11-02T14:44:08.905Z"
+    }
+  }
 }
